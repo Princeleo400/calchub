@@ -16,7 +16,18 @@ const chartVars =
   "[--series-1:#2a78d6] [--series-2:#eb6834] [--grid:#e2e8f0] [--axis-text:#64748b] [--cursor:rgba(148,163,184,0.15)] [--surface:#ffffff] " +
   "dark:[--series-1:#3987e5] dark:[--series-2:#d95926] dark:[--grid:#334155] dark:[--axis-text:#94a3b8] dark:[--surface:#0f172a]";
 
-export function MortgageChart({ schedule }: { schedule: YearRow[] }) {
+interface MortgageChartProps {
+  schedule: YearRow[];
+  title?: string;
+  note?: string;
+}
+
+/** Yearly principal vs interest chart plus the table. Shared by the mortgage and loan calculators. */
+export function MortgageChart({
+  schedule,
+  title = "Where each year\u2019s payments go",
+  note = "Early payments are mostly interest. The balance falls faster each year.",
+}: MortgageChartProps) {
   if (schedule.length === 0) return null;
 
   return (
@@ -26,7 +37,7 @@ export function MortgageChart({ schedule }: { schedule: YearRow[] }) {
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <h2 id="amortization-heading" className="text-base font-semibold text-slate-900 dark:text-slate-50">
-          Where each year&apos;s payments go
+          {title}
         </h2>
         <ul className="flex gap-4 text-xs text-slate-600 dark:text-slate-300" aria-label="Legend">
           <li className="flex items-center gap-1.5">
@@ -40,7 +51,7 @@ export function MortgageChart({ schedule }: { schedule: YearRow[] }) {
         </ul>
       </div>
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        Early payments are mostly interest. The balance falls faster each year.
+        {note}
       </p>
 
       <div className="mt-4" aria-hidden>
