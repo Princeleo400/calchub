@@ -76,7 +76,8 @@ function coerce(raw: string, fallback: InputValue): InputValue | undefined {
     if (raw === "0" || raw === "false") return false;
     return undefined;
   }
-  return raw.slice(0, 100);
+  // Long enough for encoded lists (e.g. up to 10 debts), short enough to stay sane.
+  return raw.slice(0, 2000);
 }
 
 function parseParams<T extends CalculatorInputs>(search: string, defaults: T): T | null {
