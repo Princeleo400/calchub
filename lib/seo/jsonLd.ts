@@ -5,14 +5,19 @@ export interface FaqItem {
   answer: string;
 }
 
-export function webApplicationJsonLd(opts: { name: string; description: string; path: string }) {
+export function webApplicationJsonLd(opts: {
+  name: string;
+  description: string;
+  path: string;
+  category: "finance" | "health";
+}) {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: opts.name,
     description: opts.description,
     url: `${site.url}${opts.path}`,
-    applicationCategory: "FinanceApplication",
+    applicationCategory: opts.category === "health" ? "HealthApplication" : "FinanceApplication",
     operatingSystem: "Any",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };

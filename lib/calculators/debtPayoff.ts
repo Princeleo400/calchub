@@ -49,18 +49,28 @@ function targetOrder(debts: Debt[], method: PayoffMethod): number[] {
   return idx.sort((a, b) => {
     const da = debts[a];
     const db = debts[b];
-    if (method === "avalanche") return db.rate - da.rate || da.balance - db.balance || a - b;
+    if (method === "avalanche")
+      return db.rate - da.rate || da.balance - db.balance || a - b;
     return da.balance - db.balance || db.rate - da.rate || a - b;
   });
 }
 
-function simulate(debts: Debt[], extra: number, method: PayoffMethod | "minimums"): PayoffPlan {
+function simulate(
+  debts: Debt[],
+  extra: number,
+  method: PayoffMethod | "minimums",
+): PayoffPlan {
   const balances = debts.map((d) => Math.max(0, d.balance));
   const interestPaid = debts.map(() => 0);
-  const paidOffMonth: Array<number | null> = debts.map((d) => (d.balance > 0 ? null : 0));
-  const order = method === "minimums" ? debts.map((_, i) => i) : targetOrder(debts, method);
+  const paidOffMonth: Array<number | null> = debts.map((d) =>
+    d.balance > 0 ? null : 0,
+  );
+  const order =
+    method === "minimums" ? debts.map((_, i) => i) : targetOrder(debts, method);
   // With rollover, the total paid each month stays fixed at minimums + extra.
-  const budget = debts.reduce((sum, d) => sum + Math.max(0, d.minPayment), 0) + Math.max(0, extra);
+  const budget =
+    debts.reduce((sum, d) => sum + Math.max(0, d.minPayment), 0) +
+    Math.max(0, extra);
 
   const totals: number[] = [balances.reduce((a, b) => a + b, 0)];
   let totalInterest = 0;
@@ -83,7 +93,11 @@ function simulate(debts: Debt[], extra: number, method: PayoffMethod | "minimums
     let available = method === "minimums" ? Infinity : budget;
     for (let i = 0; i < debts.length; i++) {
       if (balances[i] <= 0) continue;
-      const pay = Math.min(balances[i], Math.max(0, debts[i].minPayment), available);
+      const pay = Math.min(
+        balances[i],
+        Math.max(0, debts[i].minPayment),
+        available,
+      );
       balances[i] -= pay;
       available -= pay;
       totalPaid += pay;
@@ -103,7 +117,8 @@ function simulate(debts: Debt[], extra: number, method: PayoffMethod | "minimums
 
     for (let i = 0; i < debts.length; i++) {
       if (balances[i] <= 0.005) balances[i] = 0;
-      if (balances[i] === 0 && paidOffMonth[i] === null) paidOffMonth[i] = month;
+      if (balances[i] === 0 && paidOffMonth[i] === null)
+        paidOffMonth[i] = month;
     }
     totals.push(balances.reduce((a, b) => a + b, 0));
   }
@@ -114,15 +129,25 @@ function simulate(debts: Debt[], extra: number, method: PayoffMethod | "minimums
     months: finished ? month : null,
     totalInterest,
     totalPaid,
-    order: order.map((i) => ({ name: debts[i].name, paidOffMonth: paidOffMonth[i], interestPaid: interestPaid[i] })),
+    order: order.map((i) => ({
+      name: debts[i].name,
+      paidOffMonth: paidOffMonth[i],
+      interestPaid: interestPaid[i],
+    })),
     balances: totals,
   };
 }
 
-export function calculateDebtPayoff(debts: Debt[], extraPerMonth: number): DebtPayoffResult {
+export function calculateDebtPayoff(
+  debts: Debt[],
+  extraPerMonth: number,
+): DebtPayoffResult {
   const active = debts.filter((d) => d.balance > 0);
   const extra = Math.max(0, extraPerMonth);
-  const totalMinimums = active.reduce((sum, d) => sum + Math.max(0, d.minPayment), 0);
+  const totalMinimums = active.reduce(
+    (sum, d) => sum + Math.max(0, d.minPayment),
+    0,
+  );
   return {
     totalBalance: active.reduce((sum, d) => sum + d.balance, 0),
     totalMinimums,
@@ -139,7 +164,9 @@ export function calculateDebtPayoff(debts: Debt[], extraPerMonth: number): DebtP
 
 export function encodeDebts(debts: Debt[]): string {
   return debts
-    .map((d) => [encodeURIComponent(d.name), d.balance, d.rate, d.minPayment].join(","))
+    .map((d) =>
+      [encodeURIComponent(d.name), d.balance, d.rate, d.minPayment].join(","),
+    )
     .join(";");
 }
 
@@ -155,7 +182,12 @@ export function decodeDebts(value: string, max = 10): Debt[] {
     } catch {
       name = "";
     }
-    out.push({ name, balance: nums[0], rate: Math.min(nums[1], 100), minPayment: nums[2] });
+    out.push({
+      name,
+      balance: nums[0],
+      rate: Math.min(nums[1], 100),
+      minPayment: nums[2],
+    });
     if (out.length >= max) break;
   }
   return out;
