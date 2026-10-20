@@ -48,7 +48,7 @@ export function CalculatorShell({
   });
 
   const structuredData: object[] = [
-    webApplicationJsonLd({ name: title, description: meta.description, path }),
+    webApplicationJsonLd({ name: title, description: meta.description, path, category: meta.category }),
     breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: title, path },
