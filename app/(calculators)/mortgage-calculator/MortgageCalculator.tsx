@@ -9,7 +9,11 @@ import { SelectField } from "@/components/calculator/SelectField";
 import { ShareButton } from "@/components/calculator/ShareButton";
 import { MortgageChart } from "@/components/charts/MortgageChart";
 import { HistoryPanel } from "@/components/history/HistoryPanel";
-import { calculateMortgage, formatDuration, type MortgageInputs } from "@/lib/calculators/mortgage";
+import {
+  calculateMortgage,
+  formatDuration,
+  type MortgageInputs,
+} from "@/lib/calculators/mortgage";
 import { useRecordCalculation } from "@/lib/hooks/useCalculatorHistory";
 import { useShareableUrl } from "@/lib/hooks/useShareableUrl";
 import { mortgageInsight } from "@/lib/insights/mortgage";
@@ -35,17 +39,17 @@ const TERMS = [
   { value: "10", label: "10 years" },
 ] as const;
 
-function toInputs(v: typeof DEFAULTS): MortgageInputs {
+function toInputs(values: typeof DEFAULTS): MortgageInputs {
   return {
-    homePrice: v.price,
-    downPaymentPct: v.down,
-    rate: v.rate,
-    termYears: v.term,
-    propertyTaxPct: v.tax,
-    insurancePerYear: v.ins,
-    hoaPerMonth: v.hoa,
-    pmiPct: v.pmi,
-    extraPerMonth: v.extra,
+    homePrice: values.price,
+    downPaymentPct: values.down,
+    rate: values.rate,
+    termYears: values.term,
+    propertyTaxPct: values.tax,
+    insurancePerYear: values.ins,
+    hoaPerMonth: values.hoa,
+    pmiPct: values.pmi,
+    extraPerMonth: values.extra,
   };
 }
 
@@ -67,23 +71,29 @@ export function MortgageCalculator() {
     summary: `${formatCurrency(values.price)} home, ${formatNumber(values.down, 1)}% down, ${values.rate}% for ${values.term} years`,
   });
 
-  const r = values.rate / 100 / 12;
-  const n = values.term * 12;
+  const monthlyRate = values.rate / 100 / 12;
+  const payments = values.term * 12;
   const formula = [
     "M = P × r(1 + r)^n / ((1 + r)^n − 1)",
     "",
     `P = ${formatCurrency(result.loanAmount)}   (price − down payment)`,
-    `r = ${values.rate}% ÷ 12 = ${r.toFixed(6)}`,
-    `n = ${values.term} × 12 = ${n} payments`,
+    `r = ${values.rate}% ÷ 12 = ${monthlyRate.toFixed(6)}`,
+    `n = ${values.term} × 12 = ${payments} payments`,
     "",
     `M = ${formatCurrency(result.monthlyPrincipalInterest, "USD", 2)} principal and interest`,
     `  + ${formatCurrency(result.monthlyTax, "USD", 2)} property tax (${values.tax}% × price ÷ 12)`,
     `  + ${formatCurrency(result.monthlyInsurance, "USD", 2)} insurance (${formatCurrency(values.ins)} ÷ 12)`,
     ...(result.monthlyPmi > 0
-      ? [`  + ${formatCurrency(result.monthlyPmi, "USD", 2)} PMI (${values.pmi}% × loan ÷ 12)`]
+      ? [
+          `  + ${formatCurrency(result.monthlyPmi, "USD", 2)} PMI (${values.pmi}% × loan ÷ 12)`,
+        ]
       : []),
-    ...(result.monthlyHoa > 0 ? [`  + ${formatCurrency(result.monthlyHoa, "USD", 2)} HOA`] : []),
-    ...(values.extra > 0 ? [`  + ${formatCurrency(values.extra, "USD", 2)} extra principal`] : []),
+    ...(result.monthlyHoa > 0
+      ? [`  + ${formatCurrency(result.monthlyHoa, "USD", 2)} HOA`]
+      : []),
+    ...(values.extra > 0
+      ? [`  + ${formatCurrency(values.extra, "USD", 2)} extra principal`]
+      : []),
     `  = ${formatCurrency(result.totalMonthly, "USD", 2)} a month`,
   ];
 
@@ -132,7 +142,8 @@ export function MortgageCalculator() {
           <fieldset className="space-y-4 border-t border-slate-200 pt-4 dark:border-slate-700">
             <legend className="sr-only">Taxes, insurance and fees</legend>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Taxes, insurance and fees. Use figures from your lender or county for accuracy.
+              Taxes, insurance and fees. Use figures from your lender or county
+              for accuracy.
             </p>
             <div className="grid grid-cols-2 gap-4">
               <NumberField
@@ -175,7 +186,11 @@ export function MortgageCalculator() {
                 max={5}
                 value={values.pmi}
                 onChange={(pmi) => update({ pmi })}
-                hint={values.down >= 20 ? "Not charged at 20% down" : `${formatCurrency(result.monthlyPmi)} a month`}
+                hint={
+                  values.down >= 20
+                    ? "Not charged at 20% down"
+                    : `${formatCurrency(result.monthlyPmi)} a month`
+                }
               />
             </div>
           </fieldset>
@@ -204,15 +219,46 @@ export function MortgageCalculator() {
             caption={`Loan of ${formatCurrency(result.loanAmount)}, paid off in ${formatDuration(result.payoffMonths)}`}
             actions={<ShareButton calculator="mortgage-calculator" />}
           >
-            <ResultRow label="Principal & interest" value={formatCurrency(result.monthlyPrincipalInterest)} />
-            <ResultRow label="Property tax" value={formatCurrency(result.monthlyTax)} />
-            <ResultRow label="Home insurance" value={formatCurrency(result.monthlyInsurance)} />
-            {result.monthlyPmi > 0 && <ResultRow label="PMI" value={formatCurrency(result.monthlyPmi)} />}
-            {result.monthlyHoa > 0 && <ResultRow label="HOA dues" value={formatCurrency(result.monthlyHoa)} />}
-            {values.extra > 0 && <ResultRow label="Extra principal" value={formatCurrency(values.extra)} />}
-            <ResultRow label="Total interest" value={formatCurrency(result.totalInterest)} emphasis />
+            <ResultRow
+              label="Principal & interest"
+              value={formatCurrency(result.monthlyPrincipalInterest)}
+            />
+            <ResultRow
+              label="Property tax"
+              value={formatCurrency(result.monthlyTax)}
+            />
+            <ResultRow
+              label="Home insurance"
+              value={formatCurrency(result.monthlyInsurance)}
+            />
+            {result.monthlyPmi > 0 && (
+              <ResultRow
+                label="PMI"
+                value={formatCurrency(result.monthlyPmi)}
+              />
+            )}
+            {result.monthlyHoa > 0 && (
+              <ResultRow
+                label="HOA dues"
+                value={formatCurrency(result.monthlyHoa)}
+              />
+            )}
+            {values.extra > 0 && (
+              <ResultRow
+                label="Extra principal"
+                value={formatCurrency(values.extra)}
+              />
+            )}
+            <ResultRow
+              label="Total interest"
+              value={formatCurrency(result.totalInterest)}
+              emphasis
+            />
             {result.interestSaved > 0 && (
-              <ResultRow label="Interest saved by extra payments" value={formatCurrency(result.interestSaved)} />
+              <ResultRow
+                label="Interest saved by extra payments"
+                value={formatCurrency(result.interestSaved)}
+              />
             )}
           </ResultCard>
           <InsightCard>
@@ -229,7 +275,10 @@ export function MortgageCalculator() {
             lines={formula}
             note="Standard fixed-rate amortization formula. Taxes, insurance and PMI are estimates and change over time."
           />
-          <HistoryPanel calculator="mortgage-calculator" onRestore={(record) => replace(record.inputs)} />
+          <HistoryPanel
+            calculator="mortgage-calculator"
+            onRestore={(record) => replace(record.inputs)}
+          />
         </>
       }
     />

@@ -7,11 +7,13 @@ import { post as bmi } from "./posts/is-bmi-accurate";
 
 // Add new articles here. Newest first by published date, then by title.
 export const posts: Post[] = [afford, snowball, terms, pmi, bmi].sort(
-  (a, b) => b.published.localeCompare(a.published) || a.title.localeCompare(b.title),
+  (first, second) =>
+    second.published.localeCompare(first.published) ||
+    first.title.localeCompare(second.title),
 );
 
 export function getPost(slug: string): Post | undefined {
-  return posts.find((p) => p.slug === slug);
+  return posts.find((post) => post.slug === slug);
 }
 
 export function formatPostDate(iso: string): string {

@@ -34,7 +34,8 @@ export function BmiScale({
   category: BmiCategoryId;
 }) {
   const active = category.startsWith("obesity") ? "obesity" : category;
-  const label = BMI_CATEGORIES.find((c) => c.id === category)?.label ?? "";
+  const label =
+    BMI_CATEGORIES.find((entry) => entry.id === category)?.label ?? "";
 
   return (
     <figure className="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900">
@@ -47,54 +48,54 @@ export function BmiScale({
             className="absolute -top-6 flex -translate-x-1/2 flex-col items-center"
             style={{ left: `${position(bmi)}%` }}
           >
-            <span className="rounded bg-slate-900 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-white dark:bg-slate-50 dark:text-slate-900">
+            <span className="rounded bg-slate-900 px-1.5 py-0.5 text-[11px] font-semibold text-white tabular-nums dark:bg-slate-50 dark:text-slate-900">
               {formatNumber(bmi, 1)}
             </span>
             <span className="h-2 w-0.5 bg-slate-900 dark:bg-slate-50" />
           </div>
         )}
         <div className="flex h-3 gap-0.5 overflow-hidden rounded">
-          {segments.map((s) => (
+          {segments.map((segment) => (
             <div
-              key={s.id}
+              key={segment.id}
               style={{
-                width: `${((s.to - s.from) / (SCALE_MAX - SCALE_MIN)) * 100}%`,
+                width: `${((segment.to - segment.from) / (SCALE_MAX - SCALE_MIN)) * 100}%`,
               }}
               className={cn(
                 "h-full",
-                s.id === active
+                segment.id === active
                   ? "bg-blue-600 dark:bg-blue-500"
                   : "bg-slate-200 dark:bg-slate-700",
               )}
             />
           ))}
         </div>
-        <div className="relative mt-1 h-4 text-[11px] tabular-nums text-slate-400 dark:text-slate-500">
-          {[18.5, 25, 30].map((v) => (
+        <div className="relative mt-1 h-4 text-[11px] text-slate-400 tabular-nums dark:text-slate-500">
+          {[18.5, 25, 30].map((value) => (
             <span
-              key={v}
+              key={value}
               className="absolute -translate-x-1/2"
-              style={{ left: `${position(v)}%` }}
+              style={{ left: `${position(value)}%` }}
             >
-              {v}
+              {value}
             </span>
           ))}
         </div>
         <div className="flex text-xs">
-          {segments.map((s) => (
+          {segments.map((segment) => (
             <span
-              key={s.id}
+              key={segment.id}
               style={{
-                width: `${((s.to - s.from) / (SCALE_MAX - SCALE_MIN)) * 100}%`,
+                width: `${((segment.to - segment.from) / (SCALE_MAX - SCALE_MIN)) * 100}%`,
               }}
               className={cn(
                 "truncate text-center",
-                s.id === active
+                segment.id === active
                   ? "font-semibold text-blue-700 dark:text-blue-300"
                   : "text-slate-500 dark:text-slate-400",
               )}
             >
-              {s.label}
+              {segment.label}
             </span>
           ))}
         </div>

@@ -11,7 +11,10 @@ import {
 } from "./bmi.ts";
 
 const near = (actual: number, expected: number, tolerance = 0.01) =>
-  assert.ok(Math.abs(actual - expected) <= tolerance, `expected ${expected}, got ${actual}`);
+  assert.ok(
+    Math.abs(actual - expected) <= tolerance,
+    `expected ${expected}, got ${actual}`,
+  );
 
 test("metric BMI: 70 kg at 175 cm is 22.9", () => {
   near(bmiFromMetric(70, 175), 22.857, 0.001);
@@ -41,9 +44,9 @@ test("category follows the displayed value", () => {
 });
 
 test("healthy weight range for 175 cm", () => {
-  const r = healthyWeightRangeKg(175);
-  near(r.min, 56.66, 0.01);
-  near(r.max, 76.26, 0.01);
+  const range = healthyWeightRangeKg(175);
+  near(range.min, 56.66, 0.01);
+  near(range.max, 76.26, 0.01);
 });
 
 test("distance to the healthy range", () => {

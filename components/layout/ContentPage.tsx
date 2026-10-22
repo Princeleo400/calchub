@@ -10,7 +10,12 @@ interface ContentPageProps {
 }
 
 /** Shared layout for text pages: About, Methodology, Privacy, Terms, Contact. */
-export function ContentPage({ title, intro, lastUpdated, children }: ContentPageProps) {
+export function ContentPage({
+  title,
+  intro,
+  lastUpdated,
+  children,
+}: ContentPageProps) {
   const updated = lastUpdated
     ? new Date(`${lastUpdated}T00:00:00Z`).toLocaleDateString("en-US", {
         year: "numeric",
@@ -22,15 +27,24 @@ export function ContentPage({ title, intro, lastUpdated, children }: ContentPage
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 dark:text-slate-400">
+      <nav
+        aria-label="Breadcrumb"
+        className="text-xs text-slate-500 dark:text-slate-400"
+      >
         <ol className="flex items-center gap-1.5">
           <li>
-            <Link href="/" className="hover:text-slate-900 dark:hover:text-slate-50">
+            <Link
+              href="/"
+              className="hover:text-slate-900 dark:hover:text-slate-50"
+            >
               Home
             </Link>
           </li>
           <li aria-hidden>/</li>
-          <li aria-current="page" className="text-slate-700 dark:text-slate-200">
+          <li
+            aria-current="page"
+            className="text-slate-700 dark:text-slate-200"
+          >
             {title}
           </li>
         </ol>
@@ -39,7 +53,11 @@ export function ContentPage({ title, intro, lastUpdated, children }: ContentPage
       <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
         {title}
       </h1>
-      {intro && <div className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{intro}</div>}
+      {intro && (
+        <div className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+          {intro}
+        </div>
+      )}
       {updated && (
         <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Last updated <time dateTime={lastUpdated}>{updated}</time>

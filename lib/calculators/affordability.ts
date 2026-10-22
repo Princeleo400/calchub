@@ -35,30 +35,39 @@ export interface AffordabilityResult {
  * Housing cost is linear in price: P&I and PMI scale with the loan, tax with
  * the price; insurance and HOA are fixed. So price = (budget − fixed) ÷ costPerDollar.
  */
-export function calculateAffordability(i: AffordabilityInputs): AffordabilityResult {
-  const monthlyIncome = Math.max(0, i.annualIncome) / 12;
-  const housingCap = (monthlyIncome * i.housingRatioPct) / 100;
-  const totalCap = (monthlyIncome * i.totalDtiPct) / 100 - Math.max(0, i.monthlyDebts);
+export function calculateAffordability(
+  inputs: AffordabilityInputs,
+): AffordabilityResult {
+  const monthlyIncome = Math.max(0, inputs.annualIncome) / 12;
+  const housingCap = (monthlyIncome * inputs.housingRatioPct) / 100;
+  const totalCap =
+    (monthlyIncome * inputs.totalDtiPct) / 100 -
+    Math.max(0, inputs.monthlyDebts);
   const limitedBy = totalCap < housingCap ? "total" : "housing";
   const housingBudget = Math.max(0, Math.min(housingCap, totalCap));
 
-  const loanShare = 1 - Math.min(100, Math.max(0, i.downPaymentPct)) / 100;
-  const piPerLoanDollar = monthlyPayment(1, i.rate, i.termYears);
+  const loanShare = 1 - Math.min(100, Math.max(0, inputs.downPaymentPct)) / 100;
+  const piPerLoanDollar = monthlyPayment(1, inputs.rate, inputs.termYears);
   const needsPmi = loanShare > PMI_REQUIRED_ABOVE_LTV;
   const perPriceDollar =
     loanShare * piPerLoanDollar +
-    i.propertyTaxPct / 100 / 12 +
-    (needsPmi ? (loanShare * i.pmiPct) / 100 / 12 : 0);
-  const fixed = Math.max(0, i.insurancePerYear) / 12 + Math.max(0, i.hoaPerMonth);
+    inputs.propertyTaxPct / 100 / 12 +
+    (needsPmi ? (loanShare * inputs.pmiPct) / 100 / 12 : 0);
+  const fixed =
+    Math.max(0, inputs.insurancePerYear) / 12 + Math.max(0, inputs.hoaPerMonth);
 
-  const maxHomePrice = perPriceDollar > 0 ? Math.max(0, (housingBudget - fixed) / perPriceDollar) : 0;
+  const maxHomePrice =
+    perPriceDollar > 0
+      ? Math.max(0, (housingBudget - fixed) / perPriceDollar)
+      : 0;
   const loanAmount = maxHomePrice * loanShare;
 
   return {
     maxHomePrice,
     loanAmount,
     downPayment: maxHomePrice - loanAmount,
-    monthlyPayment: maxHomePrice > 0 ? maxHomePrice * perPriceDollar + fixed : 0,
+    monthlyPayment:
+      maxHomePrice > 0 ? maxHomePrice * perPriceDollar + fixed : 0,
     monthlyIncome,
     limitedBy,
     housingBudget,

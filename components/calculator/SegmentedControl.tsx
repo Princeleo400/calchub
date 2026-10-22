@@ -26,7 +26,7 @@ export function SegmentedControl<T extends string>({
       <p
         id={labelId}
         className={cn(
-          "text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400",
+          "text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400",
           hideLabel ? "sr-only" : "mb-1.5",
         )}
       >
@@ -37,15 +37,15 @@ export function SegmentedControl<T extends string>({
         aria-labelledby={labelId}
         className="inline-flex w-full rounded-md border border-slate-300 bg-slate-50 p-0.5 dark:border-slate-600 dark:bg-slate-800"
       >
-        {options.map((o) => {
-          const active = o.value === value;
+        {options.map((option) => {
+          const active = option.value === value;
           return (
             <button
-              key={o.value}
+              key={option.value}
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => onChange(o.value)}
+              onClick={() => onChange(option.value)}
               className={cn(
                 "h-9 flex-1 rounded px-3 text-sm transition-colors duration-150",
                 active
@@ -53,7 +53,7 @@ export function SegmentedControl<T extends string>({
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50",
               )}
             >
-              {o.label}
+              {option.label}
             </button>
           );
         })}

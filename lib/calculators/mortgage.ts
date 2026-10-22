@@ -65,13 +65,17 @@ export const PMI_REQUIRED_ABOVE_LTV = 0.8;
 export const PMI_AUTO_ENDS_AT_LTV = 0.78;
 
 /** Standard amortizing payment: P × r(1+r)^n / ((1+r)^n − 1). */
-export function monthlyPayment(principal: number, annualRatePct: number, termYears: number): number {
-  const n = Math.round(termYears * 12);
-  if (principal <= 0 || n <= 0) return 0;
-  const r = annualRatePct / 100 / 12;
-  if (r === 0) return principal / n;
-  const growth = Math.pow(1 + r, n);
-  return (principal * r * growth) / (growth - 1);
+export function monthlyPayment(
+  principal: number,
+  annualRatePct: number,
+  termYears: number,
+): number {
+  const payments = Math.round(termYears * 12);
+  if (principal <= 0 || payments <= 0) return 0;
+  const monthlyRate = annualRatePct / 100 / 12;
+  if (monthlyRate === 0) return principal / payments;
+  const growth = Math.pow(1 + monthlyRate, payments);
+  return (principal * monthlyRate * growth) / (growth - 1);
 }
 
 interface Amortization {
@@ -90,7 +94,7 @@ function amortize(
   maxMonths: number,
   pmi: { monthly: number; endsBelowBalance: number },
 ): Amortization {
-  const r = annualRatePct / 100 / 12;
+  const monthlyRate = annualRatePct / 100 / 12;
   let balance = principal;
   // PMI's automatic end follows the original schedule, ignoring extra payments.
   let scheduledBalance = principal;
@@ -106,7 +110,7 @@ function amortize(
   // Safety cap: never loop past the term (plus a little float slack).
   while (balance > 0.005 && month < maxMonths + 1) {
     month += 1;
-    const interest = balance * r;
+    const interest = balance * monthlyRate;
     const principalPaid = Math.min(balance, scheduled + extra - interest);
     if (principalPaid <= 0) break; // payment can't cover interest; guarded by callers
     if (pmiActive) totalPmi += pmi.monthly;
@@ -115,13 +119,18 @@ function amortize(
     yearPrincipal += principalPaid;
     yearInterest += interest;
 
-    scheduledBalance -= Math.min(scheduledBalance, scheduled - scheduledBalance * r);
+    scheduledBalance -= Math.min(
+      scheduledBalance,
+      scheduled - scheduledBalance * monthlyRate,
+    );
 
     // Ends at 78% of original value on schedule, or by the loan's midpoint,
     // whichever comes first (or when the loan is simply paid off).
     if (
       pmiActive &&
-      (scheduledBalance <= pmi.endsBelowBalance || month >= maxMonths / 2 || balance <= 0.005)
+      (scheduledBalance <= pmi.endsBelowBalance ||
+        month >= maxMonths / 2 ||
+        balance <= 0.005)
     ) {
       pmiActive = false;
       pmiEndsMonth = month;
@@ -150,32 +159,61 @@ export function calculateMortgage(input: MortgageInputs): MortgageResult {
   const termMonths = Math.round(input.termYears * 12);
   const extra = Math.max(0, input.extraPerMonth);
 
-  const pi = monthlyPayment(loanAmount, input.rate, input.termYears);
+  const principalInterest = monthlyPayment(
+    loanAmount,
+    input.rate,
+    input.termYears,
+  );
   const monthlyTax = (homePrice * Math.max(0, input.propertyTaxPct)) / 100 / 12;
   const monthlyInsurance = Math.max(0, input.insurancePerYear) / 12;
   const monthlyHoa = Math.max(0, input.hoaPerMonth);
 
-  const needsPmi = homePrice > 0 && loanAmount / homePrice > PMI_REQUIRED_ABOVE_LTV;
-  const monthlyPmi = needsPmi ? (loanAmount * Math.max(0, input.pmiPct)) / 100 / 12 : 0;
-  const pmi = { monthly: monthlyPmi, endsBelowBalance: homePrice * PMI_AUTO_ENDS_AT_LTV };
+  const needsPmi =
+    homePrice > 0 && loanAmount / homePrice > PMI_REQUIRED_ABOVE_LTV;
+  const monthlyPmi = needsPmi
+    ? (loanAmount * Math.max(0, input.pmiPct)) / 100 / 12
+    : 0;
+  const pmi = {
+    monthly: monthlyPmi,
+    endsBelowBalance: homePrice * PMI_AUTO_ENDS_AT_LTV,
+  };
 
-  const withExtra = amortize(loanAmount, input.rate, pi, extra, termMonths, pmi);
-  const baseline = extra > 0 ? amortize(loanAmount, input.rate, pi, 0, termMonths, pmi) : withExtra;
+  const withExtra = amortize(
+    loanAmount,
+    input.rate,
+    principalInterest,
+    extra,
+    termMonths,
+    pmi,
+  );
+  const baseline =
+    extra > 0
+      ? amortize(loanAmount, input.rate, principalInterest, 0, termMonths, pmi)
+      : withExtra;
 
   return {
     loanAmount,
     downPayment,
-    monthlyPrincipalInterest: pi,
+    monthlyPrincipalInterest: principalInterest,
     monthlyTax,
     monthlyInsurance,
     monthlyPmi,
     monthlyHoa,
-    totalMonthly: pi + extra + monthlyTax + monthlyInsurance + monthlyPmi + monthlyHoa,
+    totalMonthly:
+      principalInterest +
+      extra +
+      monthlyTax +
+      monthlyInsurance +
+      monthlyPmi +
+      monthlyHoa,
     totalInterest: withExtra.totalInterest,
     totalPmi: withExtra.totalPmi,
     payoffMonths: loanAmount > 0 ? withExtra.months : 0,
     pmiEndsMonth: withExtra.pmiEndsMonth,
-    interestSaved: Math.max(0, baseline.totalInterest - withExtra.totalInterest),
+    interestSaved: Math.max(
+      0,
+      baseline.totalInterest - withExtra.totalInterest,
+    ),
     monthsSaved: Math.max(0, baseline.months - withExtra.months),
     schedule: withExtra.schedule,
   };

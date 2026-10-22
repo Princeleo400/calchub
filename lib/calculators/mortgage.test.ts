@@ -1,9 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { calculateMortgage, formatDuration, monthlyPayment, type MortgageInputs } from "./mortgage.ts";
+import {
+  calculateMortgage,
+  formatDuration,
+  monthlyPayment,
+  type MortgageInputs,
+} from "./mortgage.ts";
 
 const near = (actual: number, expected: number, tolerance = 0.01) =>
-  assert.ok(Math.abs(actual - expected) <= tolerance, `expected ${expected}, got ${actual}`);
+  assert.ok(
+    Math.abs(actual - expected) <= tolerance,
+    `expected ${expected}, got ${actual}`,
+  );
 
 const base: MortgageInputs = {
   homePrice: 250_000,
@@ -29,34 +37,42 @@ test("zero interest divides principal evenly", () => {
 });
 
 test("total interest on $200k at 6% over 30 years", () => {
-  const r = calculateMortgage(base);
-  near(r.loanAmount, 200_000);
-  near(r.totalInterest, 231_676.38, 0.5);
-  assert.equal(r.payoffMonths, 360);
-  assert.equal(r.schedule.length, 30);
-  near(r.schedule.at(-1)!.balance, 0, 0.01);
+  const result = calculateMortgage(base);
+  near(result.loanAmount, 200_000);
+  near(result.totalInterest, 231_676.38, 0.5);
+  assert.equal(result.payoffMonths, 360);
+  assert.equal(result.schedule.length, 30);
+  near(result.schedule.at(-1)!.balance, 0, 0.01);
 });
 
 test("schedule principal adds up to the loan", () => {
-  const r = calculateMortgage({ ...base, rate: 7.25, termYears: 15 });
-  const principal = r.schedule.reduce((sum, y) => sum + y.principal, 0);
-  near(principal, r.loanAmount, 0.01);
+  const result = calculateMortgage({ ...base, rate: 7.25, termYears: 15 });
+  const principal = result.schedule.reduce(
+    (sum, year) => sum + year.principal,
+    0,
+  );
+  near(principal, result.loanAmount, 0.01);
 });
 
 test("no PMI at 20% down", () => {
-  const r = calculateMortgage(base);
-  assert.equal(r.monthlyPmi, 0);
-  assert.equal(r.pmiEndsMonth, null);
+  const result = calculateMortgage(base);
+  assert.equal(result.monthlyPmi, 0);
+  assert.equal(result.pmiEndsMonth, null);
 });
 
 test("PMI under 20% down, and it ends at 78% of the price", () => {
-  const r = calculateMortgage({ ...base, downPaymentPct: 10 });
-  near(r.monthlyPmi, (225_000 * 0.005) / 12);
-  assert.ok(r.pmiEndsMonth !== null && r.pmiEndsMonth > 0 && r.pmiEndsMonth < 360);
+  const result = calculateMortgage({ ...base, downPaymentPct: 10 });
+  near(result.monthlyPmi, (225_000 * 0.005) / 12);
+  assert.ok(
+    result.pmiEndsMonth !== null &&
+      result.pmiEndsMonth > 0 &&
+      result.pmiEndsMonth < 360,
+  );
   // The balance at the end month must be at or under 78% of $250k.
-  const pi = r.monthlyPrincipalInterest;
-  let balance = r.loanAmount;
-  for (let m = 1; m <= r.pmiEndsMonth!; m++) balance -= pi - balance * (6 / 100 / 12);
+  const principalInterest = result.monthlyPrincipalInterest;
+  let balance = result.loanAmount;
+  for (let month = 1; month <= result.pmiEndsMonth!; month++)
+    balance -= principalInterest - balance * (6 / 100 / 12);
   assert.ok(balance <= 250_000 * 0.78);
 });
 
@@ -70,7 +86,7 @@ test("extra payments shorten the loan and save interest", () => {
 });
 
 test("monthly total adds every component", () => {
-  const r = calculateMortgage({
+  const result = calculateMortgage({
     ...base,
     downPaymentPct: 5,
     propertyTaxPct: 1.2,
@@ -79,16 +95,16 @@ test("monthly total adds every component", () => {
     extraPerMonth: 100,
   });
   near(
-    r.totalMonthly,
-    r.monthlyPrincipalInterest + 100 + 250 + 150 + r.monthlyPmi + 50,
+    result.totalMonthly,
+    result.monthlyPrincipalInterest + 100 + 250 + 150 + result.monthlyPmi + 50,
   );
 });
 
 test("100% down means no loan", () => {
-  const r = calculateMortgage({ ...base, downPaymentPct: 100 });
-  assert.equal(r.loanAmount, 0);
-  assert.equal(r.monthlyPrincipalInterest, 0);
-  assert.equal(r.payoffMonths, 0);
+  const result = calculateMortgage({ ...base, downPaymentPct: 100 });
+  assert.equal(result.loanAmount, 0);
+  assert.equal(result.monthlyPrincipalInterest, 0);
+  assert.equal(result.payoffMonths, 0);
 });
 
 test("formatDuration", () => {
@@ -99,12 +115,16 @@ test("formatDuration", () => {
 
 test("extra payments don't move PMI's automatic end date", () => {
   const plain = calculateMortgage({ ...base, downPaymentPct: 10 });
-  const extra = calculateMortgage({ ...base, downPaymentPct: 10, extraPerMonth: 500 });
+  const extra = calculateMortgage({
+    ...base,
+    downPaymentPct: 10,
+    extraPerMonth: 500,
+  });
   assert.equal(extra.pmiEndsMonth, plain.pmiEndsMonth);
 });
 
 test("PMI ends by the loan's midpoint at the latest", () => {
   // 3% down at 9%: the balance falls slowly, so the midpoint rule kicks in first.
-  const r = calculateMortgage({ ...base, downPaymentPct: 3, rate: 9 });
-  assert.ok(r.pmiEndsMonth !== null && r.pmiEndsMonth <= 180);
+  const result = calculateMortgage({ ...base, downPaymentPct: 3, rate: 9 });
+  assert.ok(result.pmiEndsMonth !== null && result.pmiEndsMonth <= 180);
 });

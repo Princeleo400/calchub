@@ -27,14 +27,14 @@ test("first-time buyer relief", () => {
 });
 
 test("first-time buyers over £500,000 pay standard rates on the whole price", () => {
-  const r = calculateStampDuty({
+  const result = calculateStampDuty({
     price: 500_001,
     buyer: "firstTime",
     nonResident: false,
   });
-  assert.equal(r.overFirstTimeCap, true);
-  assert.equal(r.firstTimeReliefApplied, false);
-  assert.equal(r.tax, sdlt(500_001));
+  assert.equal(result.overFirstTimeCap, true);
+  assert.equal(result.firstTimeReliefApplied, false);
+  assert.equal(result.tax, sdlt(500_001));
 });
 
 test("additional property surcharge adds 5 points to every band", () => {
@@ -52,14 +52,14 @@ test("non-resident surcharge adds 2 points, and stacks with others", () => {
 });
 
 test("tax is rounded down to the pound and the effective rate is consistent", () => {
-  const r = calculateStampDuty({
+  const result = calculateStampDuty({
     price: 250_999,
     buyer: "mover",
     nonResident: false,
   });
   // 2,500 + 5% of 999 = 2,549.95 → 2,549
-  assert.equal(r.tax, 2_549);
-  assert.ok(Math.abs(r.effectiveRate - (2_549 / 250_999) * 100) < 1e-9);
-  const total = r.slices.reduce((s, x) => s + x.taxable, 0);
+  assert.equal(result.tax, 2_549);
+  assert.ok(Math.abs(result.effectiveRate - (2_549 / 250_999) * 100) < 1e-9);
+  const total = result.slices.reduce((sum, slice) => sum + slice.taxable, 0);
   assert.equal(total, 250_999);
 });

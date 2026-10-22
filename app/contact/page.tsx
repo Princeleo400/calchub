@@ -14,7 +14,12 @@ export default function ContactPage() {
   return (
     <ContentPage
       title="Contact"
-      intro={<p>Found an error, want a new calculator, or have a question about the site? I read every message.</p>}
+      intro={
+        <p>
+          Found an error, want a new calculator, or have a question about the
+          site? I read every message.
+        </p>
+      }
     >
       <a
         href={`mailto:${site.contactEmail}`}
@@ -24,27 +29,39 @@ export default function ContactPage() {
           <Mail className="size-5" aria-hidden />
         </span>
         <span>
-          <span className="block text-sm font-semibold text-slate-900 dark:text-slate-50">Email</span>
-          <span className="block text-sm text-blue-600 dark:text-blue-400">{site.contactEmail}</span>
+          <span className="block text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Email
+          </span>
+          <span className="block text-sm text-blue-600 dark:text-blue-400">
+            {site.contactEmail}
+          </span>
         </span>
       </a>
 
       <h2>Reporting an error</h2>
       <p>To help me check it quickly, please include:</p>
       <ul>
-        <li>which calculator you used (or paste the share link, which includes your inputs)</li>
+        <li>
+          which calculator you used (or paste the share link, which includes
+          your inputs)
+        </li>
         <li>the result you got and what you expected</li>
-        <li>where your expected figure comes from, such as a lender&apos;s statement</li>
+        <li>
+          where your expected figure comes from, such as a lender&apos;s
+          statement
+        </li>
       </ul>
       <p>
         Confirmed errors are fixed and the page&apos;s review date updated. See{" "}
-        <Link href="/methodology">how we calculate</Link> for the formulas behind each result.
+        <Link href="/methodology">how we calculate</Link> for the formulas
+        behind each result.
       </p>
 
       <h2>Please note</h2>
       <p>
-        I can&apos;t give personal financial, tax or medical advice. For decisions about your own situation, talk to
-        your lender, a financial adviser, a doctor or a registered dietitian.
+        I can&apos;t give personal financial, tax or medical advice. For
+        decisions about your own situation, talk to your lender, a financial
+        adviser, a doctor or a registered dietitian.
       </p>
     </ContentPage>
   );

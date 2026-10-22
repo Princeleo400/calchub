@@ -42,6 +42,6 @@ export function affordFor(
 }
 
 /** Round down to the nearest $1,000, matching the calculator's headline. */
-export function roundPrice(n: number): number {
-  return Math.floor(n / 1000) * 1000;
+export function roundPrice(price: number): number {
+  return Math.floor(price / 1000) * 1000;
 }

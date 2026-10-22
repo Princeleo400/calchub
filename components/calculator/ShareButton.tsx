@@ -35,12 +35,19 @@ export function ShareButton({ calculator }: { calculator: CalculatorSlug }) {
       className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 text-xs font-medium text-slate-600 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-50"
     >
       {state === "copied" ? (
-        <Check className="size-3.5 text-green-600 dark:text-green-400" aria-hidden />
+        <Check
+          className="size-3.5 text-green-600 dark:text-green-400"
+          aria-hidden
+        />
       ) : (
         <Link2 className="size-3.5" aria-hidden />
       )}
       <span aria-live="polite">
-        {state === "copied" ? "Link copied" : state === "failed" ? "Copy failed" : "Share result"}
+        {state === "copied"
+          ? "Link copied"
+          : state === "failed"
+            ? "Copy failed"
+            : "Share result"}
       </span>
     </button>
   );

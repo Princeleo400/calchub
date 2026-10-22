@@ -24,42 +24,67 @@ export default function MethodologyPage() {
       title="How we calculate"
       intro={
         <p>
-          Every {site.name} calculator uses a published, standard method. This page lists the formulas, the
-          assumptions each one makes, and where they come from, so you can check any result yourself.
+          Every {site.name} calculator uses a published, standard method. This
+          page lists the formulas, the assumptions each one makes, and where
+          they come from, so you can check any result yourself.
         </p>
       }
       lastUpdated="2026-10-20"
     >
       <h2>General principles</h2>
       <ul>
-        <li>All math runs in your browser with full precision. Results are rounded only for display.</li>
-        <li>Money is shown to the nearest dollar unless cents matter, such as in the formula breakdowns.</li>
-        <li>Calorie estimates are rounded to the nearest 10, because more precision would be misleading.</li>
         <li>
-          Every calculator has automated tests that check it against known reference values. For example, a
-          $200,000 loan at 6% over 30 years must give a payment of $1,199.10.
+          All math runs in your browser with full precision. Results are rounded
+          only for display.
         </li>
-        <li>Results are estimates for planning. They are not financial, tax or medical advice.</li>
+        <li>
+          Money is shown to the nearest dollar unless cents matter, such as in
+          the formula breakdowns.
+        </li>
+        <li>
+          Calorie estimates are rounded to the nearest 10, because more
+          precision would be misleading.
+        </li>
+        <li>
+          Every calculator has automated tests that check it against known
+          reference values. For example, a $200,000 loan at 6% over 30 years
+          must give a payment of $1,199.10.
+        </li>
+        <li>
+          Results are estimates for planning. They are not financial, tax or
+          medical advice.
+        </li>
       </ul>
 
       <h2>Mortgage calculator</h2>
       <p>
-        Principal and interest use the standard fixed-rate amortization formula, where P is the loan amount, r
-        is the annual rate divided by 12, and n is the number of monthly payments:
+        Principal and interest use the standard fixed-rate amortization formula,
+        where P is the loan amount, r is the annual rate divided by 12, and n is
+        the number of monthly payments:
       </p>
       <Formula>{"M = P × r(1 + r)^n / ((1 + r)^n − 1)"}</Formula>
       <ul>
-        <li>Property tax is the annual rate times the home price, divided by 12.</li>
+        <li>
+          Property tax is the annual rate times the home price, divided by 12.
+        </li>
         <li>Insurance and HOA dues are taken as entered.</li>
         <li>
-          PMI is charged only when the down payment is below 20%. It is calculated as the annual PMI rate times the
-          original loan amount, divided by 12. It stops when the balance on your original payment schedule reaches
-          78% of the home price, or at the loan&apos;s halfway point if that comes first, matching when federal rules
-          require most conventional PMI to end automatically. Extra payments don&apos;t move that date, but they let
-          you ask your lender to cancel sooner, once you owe 80%.
+          PMI is charged only when the down payment is below 20%. It is
+          calculated as the annual PMI rate times the original loan amount,
+          divided by 12. It stops when the balance on your original payment
+          schedule reaches 78% of the home price, or at the loan&apos;s halfway
+          point if that comes first, matching when federal rules require most
+          conventional PMI to end automatically. Extra payments don&apos;t move
+          that date, but they let you ask your lender to cancel sooner, once you
+          owe 80%.
         </li>
-        <li>Extra payments go entirely to principal in the month they are made.</li>
-        <li>Taxes, insurance and PMI are held constant, although in reality they change over time.</li>
+        <li>
+          Extra payments go entirely to principal in the month they are made.
+        </li>
+        <li>
+          Taxes, insurance and PMI are held constant, although in reality they
+          change over time.
+        </li>
       </ul>
       <p>
         Source:{" "}
@@ -71,16 +96,20 @@ export default function MethodologyPage() {
 
       <h2>Home affordability calculator</h2>
       <p>
-        The affordability calculator runs the mortgage calculator in reverse. It sets a monthly housing budget as the
-        lower of two limits, then finds the home price whose full payment fits that budget:
+        The affordability calculator runs the mortgage calculator in reverse. It
+        sets a monthly housing budget as the lower of two limits, then finds the
+        home price whose full payment fits that budget:
       </p>
       <Formula>
-        {"Budget = min(housing % × monthly income, total % × monthly income − other debts)\nPrice  = (budget − insurance − HOA) ÷ (loan share × payment factor + tax rate ÷ 12 + PMI)"}
+        {
+          "Budget = min(housing % × monthly income, total % × monthly income − other debts)\nPrice  = (budget − insurance − HOA) ÷ (loan share × payment factor + tax rate ÷ 12 + PMI)"
+        }
       </Formula>
       <p>
-        The default limits are the traditional 28% for housing and 36% for all debts; both can be changed. Prices are
-        rounded down to the nearest $1,000. Automated tests check that the price it gives produces exactly the
-        budgeted payment in the mortgage calculator.
+        The default limits are the traditional 28% for housing and 36% for all
+        debts; both can be changed. Prices are rounded down to the nearest
+        $1,000. Automated tests check that the price it gives produces exactly
+        the budgeted payment in the mortgage calculator.
       </p>
       <p>
         Source:{" "}
@@ -92,12 +121,15 @@ export default function MethodologyPage() {
 
       <h2>UK Stamp Duty calculator</h2>
       <p>
-        Stamp Duty Land Tax for residential property in England and Northern Ireland is charged in slices: each part
-        of the price is taxed at its band&apos;s rate and the slices are added together. First-time buyers use their
-        own bands up to £500,000 and pay standard rates above it. The additional-property and non-UK resident
-        surcharges add percentage points to every band on purchases of £40,000 or more. The total is rounded down to
-        the whole pound. Rates are held in one place in the code with the date they took effect and the date they
-        were last checked, and are rechecked after each UK Budget.
+        Stamp Duty Land Tax for residential property in England and Northern
+        Ireland is charged in slices: each part of the price is taxed at its
+        band&apos;s rate and the slices are added together. First-time buyers
+        use their own bands up to £500,000 and pay standard rates above it. The
+        additional-property and non-UK resident surcharges add percentage points
+        to every band on purchases of £40,000 or more. The total is rounded down
+        to the whole pound. Rates are held in one place in the code with the
+        date they took effect and the date they were last checked, and are
+        rechecked after each UK Budget.
       </p>
       <p>
         Source:{" "}
@@ -107,11 +139,46 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Canada mortgage stress test</h2>
+      <p>
+        The qualifying rate is the greater of the contract rate plus 2
+        percentage points and 5.25%. Payments use the Canadian convention for
+        fixed-rate mortgages, interest compounded semi-annually, so the monthly
+        rate is:
+      </p>
+      <Formula>{"monthly rate = (1 + annual rate ÷ 2)^(1/6) − 1"}</Formula>
+      <p>
+        At the qualifying rate, GDS is the mortgage payment plus property tax,
+        heating and 50% of condo fees, divided by gross monthly income; TDS adds
+        other debt payments. They are compared with CMHC&apos;s limits of 39%
+        and 44%. With under 20% down, the CMHC premium (2.80% to 4.00% of the
+        mortgage, plus 0.20 points for a 30-year amortization) is added to the
+        mortgage. The maximum price is found numerically, allowing for premium
+        tiers and the minimum down payment of 5% on the first $500,000 and 10%
+        above it.
+      </p>
+      <p>
+        Sources:{" "}
+        <a href="https://www.osfi-bsif.gc.ca/en/supervision/financial-institutions/banks/minimum-qualifying-rate-uninsured-mortgages">
+          OSFI minimum qualifying rate
+        </a>
+        ;{" "}
+        <a href="https://cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/calculating-gds-tds">
+          CMHC on calculating GDS and TDS
+        </a>
+        ;{" "}
+        <a href="https://laws-lois.justice.gc.ca/eng/acts/I-15/FullText.html">
+          Interest Act, section 6
+        </a>
+        .
+      </p>
+
       <h2>Loan calculator</h2>
       <p>
-        Uses the same amortization formula as the mortgage calculator. The APR includes an upfront fee by solving
-        for the rate at which the amount you actually receive (the loan minus the fee) is repaid by the same
-        monthly payment over the same term. It is found numerically to within 0.0001%.
+        Uses the same amortization formula as the mortgage calculator. The APR
+        includes an upfront fee by solving for the rate at which the amount you
+        actually receive (the loan minus the fee) is repaid by the same monthly
+        payment over the same term. It is found numerically to within 0.0001%.
       </p>
       <p>
         Source:{" "}
@@ -127,59 +194,86 @@ export default function MethodologyPage() {
         <li>Interest is added to each balance: balance × APR ÷ 12.</li>
         <li>The minimum payment is made on every open debt.</li>
         <li>
-          The rest of the monthly budget goes to the target debt: the highest APR first for the avalanche method,
-          or the smallest balance first for the snowball method. Ties are broken by the other measure.
+          The rest of the monthly budget goes to the target debt: the highest
+          APR first for the avalanche method, or the smallest balance first for
+          the snowball method. Ties are broken by the other measure.
         </li>
-        <li>When a debt is paid off, its minimum rolls into the next target, so the monthly total stays fixed.</li>
+        <li>
+          When a debt is paid off, its minimum rolls into the next target, so
+          the monthly total stays fixed.
+        </li>
       </ol>
       <p>
-        Minimum payments are held fixed and no new charges are assumed. Real credit card minimums usually fall as
-        the balance falls. The &ldquo;minimums only&rdquo; comparison pays each debt&apos;s minimum with no extra
-        payment and no rollover. Plans longer than 50 years are reported as never paying off.
+        Minimum payments are held fixed and no new charges are assumed. Real
+        credit card minimums usually fall as the balance falls. The
+        &ldquo;minimums only&rdquo; comparison pays each debt&apos;s minimum
+        with no extra payment and no rollover. Plans longer than 50 years are
+        reported as never paying off.
       </p>
 
       <h2>BMI calculator</h2>
-      <Formula>{"BMI = weight (kg) ÷ height (m)²\nBMI = 703 × weight (lb) ÷ height (in)²   (US units)"}</Formula>
+      <Formula>
+        {
+          "BMI = weight (kg) ÷ height (m)²\nBMI = 703 × weight (lb) ÷ height (in)²   (US units)"
+        }
+      </Formula>
       <p>
-        US units are converted exactly (1 lb = 0.45359237 kg, 1 in = 2.54 cm) before calculating. The category is
-        based on the BMI rounded to one decimal, so the label always matches the number shown. Categories follow
-        the CDC adult ranges for ages 20 and over: underweight below 18.5, healthy weight 18.5 to under 25,
-        overweight 25 to under 30, and obesity 30 or higher in three classes. The healthy weight range uses a BMI
-        of 18.5 to 24.9.
+        US units are converted exactly (1 lb = 0.45359237 kg, 1 in = 2.54 cm)
+        before calculating. The category is based on the BMI rounded to one
+        decimal, so the label always matches the number shown. Categories follow
+        the CDC adult ranges for ages 20 and over: underweight below 18.5,
+        healthy weight 18.5 to under 25, overweight 25 to under 30, and obesity
+        30 or higher in three classes. The healthy weight range uses a BMI of
+        18.5 to 24.9.
       </p>
       <p>
-        Source: <a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html">CDC adult BMI categories</a>.
+        Source:{" "}
+        <a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html">
+          CDC adult BMI categories
+        </a>
+        .
       </p>
 
       <h2>Calorie calculator</h2>
-      <p>Resting needs (BMR) use the Mifflin-St Jeor equation (Mifflin et al., 1990):</p>
+      <p>
+        Resting needs (BMR) use the Mifflin-St Jeor equation (Mifflin et al.,
+        1990):
+      </p>
       <Formula>
-        {"Men:   BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age + 5\nWomen: BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age − 161"}
+        {
+          "Men:   BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age + 5\nWomen: BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age − 161"
+        }
       </Formula>
       <p>Daily needs (TDEE) are BMR times an activity factor:</p>
       <ul>
-        {ACTIVITY_LEVELS.map((a) => (
-          <li key={a.id}>
-            {a.label} ({a.description.toLowerCase()}): × {a.factor}
+        {ACTIVITY_LEVELS.map((level) => (
+          <li key={level.id}>
+            {level.label} ({level.description.toLowerCase()}): × {level.factor}
           </li>
         ))}
       </ul>
       <p>
-        Weight goals add or subtract 250 or 500 calories a day, based on the rough rule that a pound of body
-        weight is about 3,500 calories. Any target below the estimated BMR is flagged.
+        Weight goals add or subtract 250 or 500 calories a day, based on the
+        rough rule that a pound of body weight is about 3,500 calories. Any
+        target below the estimated BMR is flagged.
       </p>
       <p>
         Sources:{" "}
         <a href="https://cancercontrol.cancer.gov/brp/research/group-evaluated-measures/adopt/ree-pal">
           National Cancer Institute on the Mifflin-St Jeor equation
         </a>
-        ; <a href="https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html">CDC on gradual weight loss</a>.
+        ;{" "}
+        <a href="https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html">
+          CDC on gradual weight loss
+        </a>
+        .
       </p>
 
       <h2>Found a problem?</h2>
       <p>
-        If a result looks wrong, please <Link href="/contact">tell us</Link> the inputs you used and what you
-        expected. Confirmed errors are fixed and the page&apos;s review date is updated.
+        If a result looks wrong, please <Link href="/contact">tell us</Link> the
+        inputs you used and what you expected. Confirmed errors are fixed and
+        the page&apos;s review date is updated.
       </p>
     </ContentPage>
   );

@@ -17,21 +17,21 @@ export const metadata = buildMetadata({
   path: "/stamp-duty-calculator",
 });
 
-const gbp = (n: number) => formatCurrency(n, "GBP");
+const gbp = (amount: number) => formatCurrency(amount, "GBP");
 const sdlt = (price: number, buyer: "mover" | "firstTime" | "additional") =>
   calculateStampDuty({ price, buyer, nonResident: false }).tax;
 
 function bandRows(bands: Band[]) {
   let from = 0;
-  return bands.map((b) => {
+  return bands.map((band) => {
     const label =
-      b.upTo === Infinity
+      band.upTo === Infinity
         ? `Above ${gbp(from)}`
         : from === 0
-          ? `Up to ${gbp(b.upTo)}`
-          : `${gbp(from + 1)} to ${gbp(b.upTo)}`;
-    from = b.upTo;
-    return [label, `${b.rate}%`];
+          ? `Up to ${gbp(band.upTo)}`
+          : `${gbp(from + 1)} to ${gbp(band.upTo)}`;
+    from = band.upTo;
+    return [label, `${band.rate}%`];
   });
 }
 
@@ -158,11 +158,11 @@ export default function StampDutyPage() {
               "Additional property",
             ]}
             numeric={[1, 2, 3]}
-            rows={EXAMPLE_PRICES.map((p) => [
-              gbp(p),
-              gbp(sdlt(p, "mover")),
-              gbp(sdlt(p, "firstTime")),
-              gbp(sdlt(p, "additional")),
+            rows={EXAMPLE_PRICES.map((price) => [
+              gbp(price),
+              gbp(sdlt(price, "mover")),
+              gbp(sdlt(price, "firstTime")),
+              gbp(sdlt(price, "additional")),
             ])}
           />
 

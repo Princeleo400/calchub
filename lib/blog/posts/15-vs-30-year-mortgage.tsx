@@ -1,6 +1,10 @@
 import { CalculatorCta } from "@/components/blog/CalculatorCta";
 import { DataTable } from "@/components/blog/DataTable";
-import { calculateMortgage, formatDuration, type MortgageInputs } from "@/lib/calculators/mortgage";
+import {
+  calculateMortgage,
+  formatDuration,
+  type MortgageInputs,
+} from "@/lib/calculators/mortgage";
 import type { Post } from "@/lib/blog/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -25,23 +29,27 @@ const fifteenSameRate = calculateMortgage({ ...base, termYears: 15 });
 // A 30-year loan where you voluntarily pay the 15-year payment amount.
 const hybrid = calculateMortgage({
   ...base,
-  extraPerMonth: fifteen.monthlyPrincipalInterest - thirty.monthlyPrincipalInterest,
+  extraPerMonth:
+    fifteen.monthlyPrincipalInterest - thirty.monthlyPrincipalInterest,
 });
-const paymentGap = fifteen.monthlyPrincipalInterest - thirty.monthlyPrincipalInterest;
+const paymentGap =
+  fifteen.monthlyPrincipalInterest - thirty.monthlyPrincipalInterest;
 
 function Body() {
   return (
     <>
       <p>
-        The two most common fixed-rate mortgages last 30 years and 15 years. The shorter loan costs far less in
-        interest, but each monthly payment is much bigger. Here is what the trade-off looks like in real numbers.
+        The two most common fixed-rate mortgages last 30 years and 15 years. The
+        shorter loan costs far less in interest, but each monthly payment is
+        much bigger. Here is what the trade-off looks like in real numbers.
       </p>
 
       <h2>Side by side</h2>
       <p>
-        Take a {formatCurrency(base.homePrice)} home with 20% down, so a {formatCurrency(thirty.loanAmount)} loan.
-        Using Freddie Mac&apos;s national averages for mid-October 2026, {RATE_30}% for 30 years and {RATE_15}% for
-        15 years:
+        Take a {formatCurrency(base.homePrice)} home with 20% down, so a{" "}
+        {formatCurrency(thirty.loanAmount)} loan. Using Freddie Mac&apos;s
+        national averages for mid-October 2026, {RATE_30}% for 30 years and{" "}
+        {RATE_15}% for 15 years:
       </p>
       <DataTable
         headers={["", "30-year", "15-year"]}
@@ -53,7 +61,11 @@ function Body() {
             formatCurrency(thirty.monthlyPrincipalInterest),
             formatCurrency(fifteen.monthlyPrincipalInterest),
           ],
-          ["Total interest", formatCurrency(thirty.totalInterest), formatCurrency(fifteen.totalInterest)],
+          [
+            "Total interest",
+            formatCurrency(thirty.totalInterest),
+            formatCurrency(fifteen.totalInterest),
+          ],
           [
             "Total repaid",
             formatCurrency(thirty.loanAmount + thirty.totalInterest),
@@ -62,58 +74,85 @@ function Body() {
         ]}
       />
       <p>
-        The 15-year loan costs {formatCurrency(paymentGap)} more each month but saves{" "}
-        <strong>{formatCurrency(thirty.totalInterest - fifteen.totalInterest)}</strong> in interest. Property tax and
-        insurance are left out here because they are the same for both loans.
+        The 15-year loan costs {formatCurrency(paymentGap)} more each month but
+        saves{" "}
+        <strong>
+          {formatCurrency(thirty.totalInterest - fifteen.totalInterest)}
+        </strong>{" "}
+        in interest. Property tax and insurance are left out here because they
+        are the same for both loans.
       </p>
 
       <h2>Why the 15-year saves so much</h2>
       <p>Two things work in its favor:</p>
       <ul>
         <li>
-          <strong>Half the time.</strong> You pay interest for 15 years instead of 30, and the balance falls much
-          faster from the start.
+          <strong>Half the time.</strong> You pay interest for 15 years instead
+          of 30, and the balance falls much faster from the start.
         </li>
         <li>
-          <strong>A lower rate.</strong> Lenders usually charge less for shorter loans. Even at the same{" "}
-          {RATE_30}% rate, the 15-year loan would cost {formatCurrency(fifteenSameRate.totalInterest)} in interest;
-          the lower rate saves another{" "}
-          {formatCurrency(fifteenSameRate.totalInterest - fifteen.totalInterest)}.
+          <strong>A lower rate.</strong> Lenders usually charge less for shorter
+          loans. Even at the same {RATE_30}% rate, the 15-year loan would cost{" "}
+          {formatCurrency(fifteenSameRate.totalInterest)} in interest; the lower
+          rate saves another{" "}
+          {formatCurrency(
+            fifteenSameRate.totalInterest - fifteen.totalInterest,
+          )}
+          .
         </li>
       </ul>
 
-      <CalculatorCta slug="mortgage-calculator" text="Compare terms with your own price, rate and taxes." />
+      <CalculatorCta
+        slug="mortgage-calculator"
+        text="Compare terms with your own price, rate and taxes."
+      />
 
       <h2>The middle path: a 30-year loan paid like a 15-year</h2>
       <p>
-        Some buyers take a 30-year loan for its lower required payment, then pay extra whenever they can. If you
-        paid the 15-year amount, {formatCurrency(fifteen.monthlyPrincipalInterest)} a month, on the 30-year loan
-        at {RATE_30}%, you would finish in about {formatDuration(hybrid.payoffMonths)} and pay{" "}
+        Some buyers take a 30-year loan for its lower required payment, then pay
+        extra whenever they can. If you paid the 15-year amount,{" "}
+        {formatCurrency(fifteen.monthlyPrincipalInterest)} a month, on the
+        30-year loan at {RATE_30}%, you would finish in about{" "}
+        {formatDuration(hybrid.payoffMonths)} and pay{" "}
         {formatCurrency(hybrid.totalInterest)} in interest.
       </p>
       <p>
-        That is {formatCurrency(hybrid.totalInterest - fifteen.totalInterest)} more than the true 15-year loan,
-        because the 30-year rate is higher. In exchange you get flexibility: in a tight month, you can drop back to
-        the lower required payment of {formatCurrency(thirty.monthlyPrincipalInterest)}. Check that your loan has
-        no prepayment penalty first.
+        That is {formatCurrency(hybrid.totalInterest - fifteen.totalInterest)}{" "}
+        more than the true 15-year loan, because the 30-year rate is higher. In
+        exchange you get flexibility: in a tight month, you can drop back to the
+        lower required payment of{" "}
+        {formatCurrency(thirty.monthlyPrincipalInterest)}. Check that your loan
+        has no prepayment penalty first.
       </p>
 
       <h2>Which should you choose?</h2>
       <h3>A 15-year mortgage suits you if</h3>
       <ul>
-        <li>the higher payment fits comfortably, with room left to save and to cover emergencies;</li>
-        <li>you want to own your home outright sooner, for example before retirement;</li>
+        <li>
+          the higher payment fits comfortably, with room left to save and to
+          cover emergencies;
+        </li>
+        <li>
+          you want to own your home outright sooner, for example before
+          retirement;
+        </li>
         <li>you value the guaranteed saving over keeping cash flexible.</li>
       </ul>
       <h3>A 30-year mortgage suits you if</h3>
       <ul>
         <li>the lower payment is what makes the home affordable;</li>
-        <li>your income is irregular and you want a smaller required payment;</li>
-        <li>you would otherwise put little into retirement savings or an emergency fund.</li>
+        <li>
+          your income is irregular and you want a smaller required payment;
+        </li>
+        <li>
+          you would otherwise put little into retirement savings or an emergency
+          fund.
+        </li>
       </ul>
       <p>
-        A larger payment you can&apos;t sustain is riskier than a smaller one with less interest saved. If in doubt,
-        the 30-year loan with voluntary extra payments keeps your options open.
+        A larger payment you can&apos;t sustain is riskier than a smaller one
+        with less interest saved. If in doubt, the 30-year loan with voluntary
+        extra payments keeps your options open.
       </p>
     </>
   );
@@ -141,7 +180,8 @@ export const post: Post = {
   ],
   sources: [
     {
-      label: "Trading Economics: US 30-year mortgage rate, citing Freddie Mac's Primary Mortgage Market Survey (October 2026)",
+      label:
+        "Trading Economics: US 30-year mortgage rate, citing Freddie Mac's Primary Mortgage Market Survey (October 2026)",
       href: "https://tradingeconomics.com/united-states/30-year-mortgage-rate/news/588887",
     },
     {

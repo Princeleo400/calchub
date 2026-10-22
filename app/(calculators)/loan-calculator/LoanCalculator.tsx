@@ -32,13 +32,13 @@ const UNITS = [
   { value: "months", label: "Months" },
 ] as const;
 
-function toInputs(v: typeof DEFAULTS): LoanInputs {
+function toInputs(values: typeof DEFAULTS): LoanInputs {
   return {
-    amount: v.amount,
-    rate: v.rate,
-    termMonths: v.unit === "months" ? v.term : v.term * 12,
-    feePct: v.fee,
-    extraPerMonth: v.extra,
+    amount: values.amount,
+    rate: values.rate,
+    termMonths: values.unit === "months" ? values.term : values.term * 12,
+    feePct: values.fee,
+    extraPerMonth: values.extra,
   };
 }
 
@@ -69,12 +69,12 @@ export function LoanCalculator() {
     update({ unit: next, term });
   }
 
-  const r = values.rate / 100 / 12;
+  const monthlyRate = values.rate / 100 / 12;
   const formula = [
     "M = P × r(1 + r)^n / ((1 + r)^n − 1)",
     "",
     `P = ${formatCurrency(values.amount)}`,
-    `r = ${values.rate}% ÷ 12 = ${r.toFixed(6)}`,
+    `r = ${values.rate}% ÷ 12 = ${monthlyRate.toFixed(6)}`,
     `n = ${inputs.termMonths} monthly payments`,
     "",
     `M = ${formatCurrency(result.monthlyPayment, "USD", 2)} a month`,

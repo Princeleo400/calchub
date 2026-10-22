@@ -81,24 +81,26 @@ function sliceTax(price: number, bands: Band[], extra: number): BandSlice[] {
 
 export function calculateStampDuty(input: StampDutyInputs): StampDutyResult {
   const price = Math.max(0, input.price);
-  const r = SDLT_RATES;
-  const surchargeApplies = price >= r.surchargeMinPrice;
+  const rates = SDLT_RATES;
+  const surchargeApplies = price >= rates.surchargeMinPrice;
 
   const overFirstTimeCap =
-    input.buyer === "firstTime" && price > r.firstTimeBuyerMaxPrice;
+    input.buyer === "firstTime" && price > rates.firstTimeBuyerMaxPrice;
   const firstTimeReliefApplied =
     input.buyer === "firstTime" && !overFirstTimeCap;
-  const bands = firstTimeReliefApplied ? r.firstTimeBuyer : r.standard;
+  const bands = firstTimeReliefApplied ? rates.firstTimeBuyer : rates.standard;
 
   let surchargePoints = 0;
   if (surchargeApplies && input.buyer === "additional")
-    surchargePoints += r.additionalSurcharge;
+    surchargePoints += rates.additionalSurcharge;
   if (surchargeApplies && input.nonResident)
-    surchargePoints += r.nonResidentSurcharge;
+    surchargePoints += rates.nonResidentSurcharge;
 
   const slices = sliceTax(price, bands, surchargePoints);
   // Round down to the whole pound, as HMRC does.
-  const tax = Math.floor(slices.reduce((sum, s) => sum + s.tax, 0) + 1e-9);
+  const tax = Math.floor(
+    slices.reduce((sum, slice) => sum + slice.tax, 0) + 1e-9,
+  );
 
   return {
     tax,

@@ -35,9 +35,9 @@ export const HEALTHY_MIN = 18.5;
 export const HEALTHY_MAX = 24.9;
 
 export function bmiFromMetric(weightKg: number, heightCm: number): number {
-  const m = heightCm / 100;
-  if (weightKg <= 0 || m <= 0) return 0;
-  return weightKg / (m * m);
+  const heightM = heightCm / 100;
+  if (weightKg <= 0 || heightM <= 0) return 0;
+  return weightKg / (heightM * heightM);
 }
 
 export function bmiFromImperial(weightLb: number, heightIn: number): number {
@@ -48,8 +48,9 @@ export function bmiFromImperial(weightLb: number, heightIn: number): number {
 export function bmiCategory(bmi: number): BmiCategory {
   const shown = Math.round(bmi * 10) / 10;
   return (
-    BMI_CATEGORIES.find((c) => shown >= c.min && shown < c.max) ??
-    BMI_CATEGORIES[0]
+    BMI_CATEGORIES.find(
+      (category) => shown >= category.min && shown < category.max,
+    ) ?? BMI_CATEGORIES[0]
   );
 }
 
@@ -58,8 +59,11 @@ export function healthyWeightRangeKg(heightCm: number): {
   min: number;
   max: number;
 } {
-  const m = heightCm / 100;
-  return { min: HEALTHY_MIN * m * m, max: HEALTHY_MAX * m * m };
+  const heightM = heightCm / 100;
+  return {
+    min: HEALTHY_MIN * heightM * heightM,
+    max: HEALTHY_MAX * heightM * heightM,
+  };
 }
 
 export interface BmiResult {

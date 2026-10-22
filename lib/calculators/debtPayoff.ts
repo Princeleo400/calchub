@@ -45,13 +45,21 @@ export interface DebtPayoffResult {
 export const MAX_MONTHS = 600;
 
 function targetOrder(debts: Debt[], method: PayoffMethod): number[] {
-  const idx = debts.map((_, i) => i);
-  return idx.sort((a, b) => {
-    const da = debts[a];
-    const db = debts[b];
+  const idx = debts.map((_debt, index) => index);
+  return idx.sort((firstIndex, secondIndex) => {
+    const firstDebt = debts[firstIndex];
+    const secondDebt = debts[secondIndex];
     if (method === "avalanche")
-      return db.rate - da.rate || da.balance - db.balance || a - b;
-    return da.balance - db.balance || db.rate - da.rate || a - b;
+      return (
+        secondDebt.rate - firstDebt.rate ||
+        firstDebt.balance - secondDebt.balance ||
+        firstIndex - secondIndex
+      );
+    return (
+      firstDebt.balance - secondDebt.balance ||
+      secondDebt.rate - firstDebt.rate ||
+      firstIndex - secondIndex
+    );
   });
 }
 
@@ -60,19 +68,23 @@ function simulate(
   extra: number,
   method: PayoffMethod | "minimums",
 ): PayoffPlan {
-  const balances = debts.map((d) => Math.max(0, d.balance));
+  const balances = debts.map((debt) => Math.max(0, debt.balance));
   const interestPaid = debts.map(() => 0);
-  const paidOffMonth: Array<number | null> = debts.map((d) =>
-    d.balance > 0 ? null : 0,
+  const paidOffMonth: Array<number | null> = debts.map((debt) =>
+    debt.balance > 0 ? null : 0,
   );
   const order =
-    method === "minimums" ? debts.map((_, i) => i) : targetOrder(debts, method);
+    method === "minimums"
+      ? debts.map((_debt, index) => index)
+      : targetOrder(debts, method);
   // With rollover, the total paid each month stays fixed at minimums + extra.
   const budget =
-    debts.reduce((sum, d) => sum + Math.max(0, d.minPayment), 0) +
+    debts.reduce((sum, debt) => sum + Math.max(0, debt.minPayment), 0) +
     Math.max(0, extra);
 
-  const totals: number[] = [balances.reduce((a, b) => a + b, 0)];
+  const totals: number[] = [
+    balances.reduce((total, balance) => total + balance, 0),
+  ];
   let totalInterest = 0;
   let totalPaid = 0;
   let month = 0;
@@ -81,46 +93,47 @@ function simulate(
     month += 1;
 
     // 1. Interest accrues on every open balance.
-    for (let i = 0; i < debts.length; i++) {
-      if (balances[i] <= 0) continue;
-      const interest = balances[i] * (Math.max(0, debts[i].rate) / 100 / 12);
-      balances[i] += interest;
-      interestPaid[i] += interest;
+    for (let index = 0; index < debts.length; index++) {
+      if (balances[index] <= 0) continue;
+      const interest =
+        balances[index] * (Math.max(0, debts[index].rate) / 100 / 12);
+      balances[index] += interest;
+      interestPaid[index] += interest;
       totalInterest += interest;
     }
 
     // 2. Minimum payment on each open debt.
     let available = method === "minimums" ? Infinity : budget;
-    for (let i = 0; i < debts.length; i++) {
-      if (balances[i] <= 0) continue;
+    for (let index = 0; index < debts.length; index++) {
+      if (balances[index] <= 0) continue;
       const pay = Math.min(
-        balances[i],
-        Math.max(0, debts[i].minPayment),
+        balances[index],
+        Math.max(0, debts[index].minPayment),
         available,
       );
-      balances[i] -= pay;
+      balances[index] -= pay;
       available -= pay;
       totalPaid += pay;
     }
 
     // 3. Whatever is left goes to the target debts in order.
     if (method !== "minimums") {
-      for (const i of order) {
+      for (const index of order) {
         if (available <= 0.000001) break;
-        if (balances[i] <= 0) continue;
-        const pay = Math.min(balances[i], available);
-        balances[i] -= pay;
+        if (balances[index] <= 0) continue;
+        const pay = Math.min(balances[index], available);
+        balances[index] -= pay;
         available -= pay;
         totalPaid += pay;
       }
     }
 
-    for (let i = 0; i < debts.length; i++) {
-      if (balances[i] <= 0.005) balances[i] = 0;
-      if (balances[i] === 0 && paidOffMonth[i] === null)
-        paidOffMonth[i] = month;
+    for (let index = 0; index < debts.length; index++) {
+      if (balances[index] <= 0.005) balances[index] = 0;
+      if (balances[index] === 0 && paidOffMonth[index] === null)
+        paidOffMonth[index] = month;
     }
-    totals.push(balances.reduce((a, b) => a + b, 0));
+    totals.push(balances.reduce((total, balance) => total + balance, 0));
   }
 
   const finished = totals[totals.length - 1] <= 0.005;
@@ -129,10 +142,10 @@ function simulate(
     months: finished ? month : null,
     totalInterest,
     totalPaid,
-    order: order.map((i) => ({
-      name: debts[i].name,
-      paidOffMonth: paidOffMonth[i],
-      interestPaid: interestPaid[i],
+    order: order.map((index) => ({
+      name: debts[index].name,
+      paidOffMonth: paidOffMonth[index],
+      interestPaid: interestPaid[index],
     })),
     balances: totals,
   };
@@ -142,14 +155,14 @@ export function calculateDebtPayoff(
   debts: Debt[],
   extraPerMonth: number,
 ): DebtPayoffResult {
-  const active = debts.filter((d) => d.balance > 0);
+  const active = debts.filter((debt) => debt.balance > 0);
   const extra = Math.max(0, extraPerMonth);
   const totalMinimums = active.reduce(
-    (sum, d) => sum + Math.max(0, d.minPayment),
+    (sum, debt) => sum + Math.max(0, debt.minPayment),
     0,
   );
   return {
-    totalBalance: active.reduce((sum, d) => sum + d.balance, 0),
+    totalBalance: active.reduce((sum, debt) => sum + debt.balance, 0),
     totalMinimums,
     monthlyBudget: totalMinimums + extra,
     avalanche: simulate(active, extra, "avalanche"),
@@ -164,8 +177,13 @@ export function calculateDebtPayoff(
 
 export function encodeDebts(debts: Debt[]): string {
   return debts
-    .map((d) =>
-      [encodeURIComponent(d.name), d.balance, d.rate, d.minPayment].join(","),
+    .map((debt) =>
+      [
+        encodeURIComponent(debt.name),
+        debt.balance,
+        debt.rate,
+        debt.minPayment,
+      ].join(","),
     )
     .join(";");
 }
@@ -175,7 +193,7 @@ export function decodeDebts(value: string, max = 10): Debt[] {
   for (const part of value.split(";")) {
     const [rawName, balance, rate, min] = part.split(",");
     const nums = [balance, rate, min].map(Number);
-    if (nums.some((n) => !Number.isFinite(n) || n < 0)) continue;
+    if (nums.some((value) => !Number.isFinite(value) || value < 0)) continue;
     let name = "";
     try {
       name = decodeURIComponent(rawName ?? "").slice(0, 40);

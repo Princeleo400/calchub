@@ -118,7 +118,7 @@ export interface CalorieResult {
 }
 
 export function getActivity(id: ActivityId): ActivityLevel {
-  return ACTIVITY_LEVELS.find((a) => a.id === id) ?? ACTIVITY_LEVELS[2];
+  return ACTIVITY_LEVELS.find((level) => level.id === id) ?? ACTIVITY_LEVELS[2];
 }
 
 export function calculateCalories(input: CalorieInputs): CalorieResult {
@@ -128,11 +128,11 @@ export function calculateCalories(input: CalorieInputs): CalorieResult {
     mifflinStJeor(input.sex, input.weightKg, input.heightCm, input.age),
   );
   const tdee = bmr * activity.factor;
-  const goals: GoalRow[] = GOALS.map((g) => {
-    const calories = Math.max(0, tdee + g.adjustment);
-    return { ...g, calories, belowBmr: calories < bmr };
+  const goals: GoalRow[] = GOALS.map((definition) => {
+    const calories = Math.max(0, tdee + definition.adjustment);
+    return { ...definition, calories, belowBmr: calories < bmr };
   });
-  const goal = goals.find((g) => g.id === input.goal) ?? goals[2];
+  const goal = goals.find((row) => row.id === input.goal) ?? goals[2];
   return { bmr, tdee, activity, goal, goals };
 }
 

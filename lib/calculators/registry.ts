@@ -2,6 +2,7 @@ import {
   Calculator,
   CreditCard,
   Flame,
+  Gauge,
   House,
   Landmark,
   PieChart,
@@ -51,6 +52,15 @@ export const calculators: CalculatorMeta[] = [
       "Stamp Duty Land Tax for England and Northern Ireland, including first-time buyer relief.",
     category: "finance",
     icon: Landmark,
+    live: true,
+  },
+  {
+    slug: "mortgage-stress-test-calculator",
+    name: "Canada Mortgage Stress Test",
+    description:
+      "Check if you pass Canada's mortgage stress test and the most you can borrow at the qualifying rate.",
+    category: "finance",
+    icon: Gauge,
     live: true,
   },
   {
@@ -117,10 +127,12 @@ export const calculators: CalculatorMeta[] = [
   },
 ];
 
-export const liveCalculators = calculators.filter((c) => c.live);
+export const liveCalculators = calculators.filter(
+  (calculator) => calculator.live,
+);
 
 export function getCalculator(slug: CalculatorSlug): CalculatorMeta {
-  const found = calculators.find((c) => c.slug === slug);
+  const found = calculators.find((calculator) => calculator.slug === slug);
   if (!found) throw new Error(`Unknown calculator: ${slug}`);
   return found;
 }
@@ -128,7 +140,9 @@ export function getCalculator(slug: CalculatorSlug): CalculatorMeta {
 export function calculatorsByCategory(
   category: CalculatorCategory,
 ): CalculatorMeta[] {
-  return liveCalculators.filter((c) => c.category === category);
+  return liveCalculators.filter(
+    (calculator) => calculator.category === category,
+  );
 }
 
 /** Up to `count` live calculators from the same category, then the other one. */
@@ -137,9 +151,15 @@ export function relatedCalculators(
   count = 3,
 ): CalculatorMeta[] {
   const current = getCalculator(slug);
-  const others = liveCalculators.filter((c) => c.slug !== slug);
-  const same = others.filter((c) => c.category === current.category);
-  const rest = others.filter((c) => c.category !== current.category);
+  const others = liveCalculators.filter(
+    (calculator) => calculator.slug !== slug,
+  );
+  const same = others.filter(
+    (calculator) => calculator.category === current.category,
+  );
+  const rest = others.filter(
+    (calculator) => calculator.category !== current.category,
+  );
   return [...same, ...rest].slice(0, count);
 }
 

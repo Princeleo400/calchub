@@ -34,7 +34,7 @@ function amortize(
   extra: number,
   maxMonths: number,
 ) {
-  const r = ratePct / 100 / 12;
+  const monthlyRate = ratePct / 100 / 12;
   let balance = principal;
   let month = 0;
   let totalInterest = 0;
@@ -44,7 +44,7 @@ function amortize(
 
   while (balance > 0.005 && month < maxMonths + 1) {
     month += 1;
-    const interest = balance * r;
+    const interest = balance * monthlyRate;
     const principalPaid = Math.min(balance, payment + extra - interest);
     if (principalPaid <= 0) break;
     balance -= principalPaid;
@@ -78,7 +78,7 @@ export function solveApr(
   if (payment * termMonths <= netReceived) return 0;
   let low = 0;
   let high = 200;
-  for (let i = 0; i < 100; i++) {
+  for (let step = 0; step < 100; step++) {
     const mid = (low + high) / 2;
     if (monthlyPayment(netReceived, mid, termMonths / 12) > payment) high = mid;
     else low = mid;

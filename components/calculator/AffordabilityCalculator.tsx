@@ -44,25 +44,25 @@ function makeDefaults(income: number) {
 
 type Values = ReturnType<typeof makeDefaults>;
 
-function toInputs(v: Values): AffordabilityInputs {
+function toInputs(values: Values): AffordabilityInputs {
   return {
-    annualIncome: v.income,
-    monthlyDebts: v.debts,
-    downPaymentPct: v.down,
-    rate: v.rate,
-    termYears: v.term,
-    propertyTaxPct: v.tax,
-    insurancePerYear: v.ins,
-    hoaPerMonth: v.hoa,
-    pmiPct: v.pmi,
-    housingRatioPct: v.front,
-    totalDtiPct: v.back,
+    annualIncome: values.income,
+    monthlyDebts: values.debts,
+    downPaymentPct: values.down,
+    rate: values.rate,
+    termYears: values.term,
+    propertyTaxPct: values.tax,
+    insurancePerYear: values.ins,
+    hoaPerMonth: values.hoa,
+    pmiPct: values.pmi,
+    housingRatioPct: values.front,
+    totalDtiPct: values.back,
   };
 }
 
 /** Rounds a price down to the nearest $1,000 so the headline never overstates. */
-function floorThousand(n: number): number {
-  return Math.floor(n / 1000) * 1000;
+function floorThousand(amount: number): number {
+  return Math.floor(amount / 1000) * 1000;
 }
 
 export function AffordabilityCalculator({
@@ -92,7 +92,7 @@ export function AffordabilityCalculator({
       ? ((breakdown.totalMonthly + values.debts) / result.monthlyIncome) * 100
       : 0;
   const rateRows = [values.rate - 1, values.rate, values.rate + 1]
-    .filter((r) => r > 0)
+    .filter((rate) => rate > 0)
     .map((rate) => ({
       rate,
       price: floorThousand(
@@ -323,7 +323,7 @@ export function AffordabilityCalculator({
               <caption className="sr-only">
                 Affordable home price at different interest rates
               </caption>
-              <thead className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <thead className="text-xs tracking-wide text-slate-500 uppercase dark:text-slate-400">
                 <tr>
                   <th scope="col" className="py-2 text-left font-medium">
                     Rate

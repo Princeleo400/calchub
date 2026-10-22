@@ -45,7 +45,8 @@ const METHODS = [
 export function DebtPayoffCalculator() {
   const { values, update, replace } = useShareableUrl(DEFAULTS);
   const debts = decodeDebts(values.debts);
-  const method: PayoffMethod = values.method === "snowball" ? "snowball" : "avalanche";
+  const method: PayoffMethod =
+    values.method === "snowball" ? "snowball" : "avalanche";
   const result = calculateDebtPayoff(debts, values.extra);
   const plan = method === "avalanche" ? result.avalanche : result.snowball;
   const insight = debtPayoffInsight(result, method, values.extra);
@@ -66,7 +67,9 @@ export function DebtPayoffCalculator() {
     "  pay the minimum",
     "",
     `Then the rest of your ${formatCurrency(result.monthlyBudget)} budget goes to the target debt:`,
-    method === "avalanche" ? "  avalanche → highest APR first" : "  snowball  → smallest balance first",
+    method === "avalanche"
+      ? "  avalanche → highest APR first"
+      : "  snowball  → smallest balance first",
     "",
     "When a debt is paid off, its minimum rolls into the next target,",
     "so the total you pay each month stays the same.",
@@ -78,7 +81,10 @@ export function DebtPayoffCalculator() {
     <CalculatorPanel
       inputs={
         <>
-          <DebtList debts={debts} onChange={(next) => update({ debts: encodeDebts(next) })} />
+          <DebtList
+            debts={debts}
+            onChange={(next) => update({ debts: encodeDebts(next) })}
+          />
           <div className="space-y-4 border-t border-slate-200 pt-4 dark:border-slate-700">
             <NumberField
               label="Extra payment"
@@ -119,12 +125,26 @@ export function DebtPayoffCalculator() {
             }
             actions={<ShareButton calculator="debt-payoff-calculator" />}
           >
-            <ResultRow label="Total owed today" value={formatCurrency(result.totalBalance)} />
-            <ResultRow label="Total interest" value={formatCurrency(plan.totalInterest)} emphasis />
-            <ResultRow label="Total paid" value={formatCurrency(plan.totalPaid)} />
+            <ResultRow
+              label="Total owed today"
+              value={formatCurrency(result.totalBalance)}
+            />
+            <ResultRow
+              label="Total interest"
+              value={formatCurrency(plan.totalInterest)}
+              emphasis
+            />
+            <ResultRow
+              label="Total paid"
+              value={formatCurrency(plan.totalPaid)}
+            />
           </ResultCard>
 
-          <MethodComparison avalanche={result.avalanche} snowball={result.snowball} selected={method} />
+          <MethodComparison
+            avalanche={result.avalanche}
+            snowball={result.snowball}
+            selected={method}
+          />
 
           <InsightCard>
             {insight.map((line) => (
@@ -136,13 +156,19 @@ export function DebtPayoffCalculator() {
       footer={
         <>
           <PayoffOrder plan={plan} method={method} />
-          <DebtChart plan={plan.balances} minimums={result.minimumsOnly.balances} />
+          <DebtChart
+            plan={plan.balances}
+            minimums={result.minimumsOnly.balances}
+          />
           <FormulaReveal
             title="Show how the plan is calculated"
             lines={formula}
             note="Assumes fixed minimum payments, fixed rates and no new charges. Real credit card minimums usually fall as the balance falls."
           />
-          <HistoryPanel calculator="debt-payoff-calculator" onRestore={(record) => replace(record.inputs)} />
+          <HistoryPanel
+            calculator="debt-payoff-calculator"
+            onRestore={(record) => replace(record.inputs)}
+          />
         </>
       }
     />
@@ -181,18 +207,18 @@ function MethodComparison({
               : "border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900",
           )}
         >
-          <p className="flex items-center justify-between gap-2 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <p className="flex items-center justify-between gap-2 text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
             {label}
             {cheaper === key && (
-              <span className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-green-700 dark:bg-green-950 dark:text-green-400">
+              <span className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold tracking-normal text-green-700 normal-case dark:bg-green-950 dark:text-green-400">
                 Lowest cost
               </span>
             )}
           </p>
-          <p className="mt-2 text-lg font-semibold tabular-nums text-slate-900 dark:text-slate-50">
+          <p className="mt-2 text-lg font-semibold text-slate-900 tabular-nums dark:text-slate-50">
             {plan.months === null ? "Never" : formatDuration(plan.months)}
           </p>
-          <p className="mt-0.5 text-xs tabular-nums text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-xs text-slate-500 tabular-nums dark:text-slate-400">
             {formatCurrency(plan.totalInterest)} interest
           </p>
         </div>
@@ -201,31 +227,49 @@ function MethodComparison({
   );
 }
 
-function PayoffOrder({ plan, method }: { plan: PayoffPlan; method: PayoffMethod }) {
+function PayoffOrder({
+  plan,
+  method,
+}: {
+  plan: PayoffPlan;
+  method: PayoffMethod;
+}) {
   if (plan.order.length === 0) return null;
   return (
     <section
       aria-labelledby="payoff-order-heading"
       className="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900"
     >
-      <h2 id="payoff-order-heading" className="text-base font-semibold text-slate-900 dark:text-slate-50">
+      <h2
+        id="payoff-order-heading"
+        className="text-base font-semibold text-slate-900 dark:text-slate-50"
+      >
         Your payoff order
       </h2>
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        {method === "avalanche" ? "Highest interest rate first." : "Smallest balance first."} Extra money goes to the
-        top debt that is still open.
+        {method === "avalanche"
+          ? "Highest interest rate first."
+          : "Smallest balance first."}{" "}
+        Extra money goes to the top debt that is still open.
       </p>
       <ol className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
-        {plan.order.map((debt, i) => (
-          <li key={`${debt.name}-${i}`} className="flex items-center justify-between gap-4 py-2.5 text-sm">
+        {plan.order.map((debt, position) => (
+          <li
+            key={`${debt.name}-${position}`}
+            className="flex items-center justify-between gap-4 py-2.5 text-sm"
+          >
             <span className="flex min-w-0 items-center gap-3">
               <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-slate-100 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                {i + 1}
+                {position + 1}
               </span>
-              <span className="truncate text-slate-900 dark:text-slate-50">{debt.name || `Debt ${i + 1}`}</span>
+              <span className="truncate text-slate-900 dark:text-slate-50">
+                {debt.name || `Debt ${position + 1}`}
+              </span>
             </span>
-            <span className="shrink-0 text-right tabular-nums text-slate-600 dark:text-slate-300">
-              {debt.paidOffMonth === null ? "Not paid off" : `Paid off in ${formatDuration(debt.paidOffMonth)}`}
+            <span className="shrink-0 text-right text-slate-600 tabular-nums dark:text-slate-300">
+              {debt.paidOffMonth === null
+                ? "Not paid off"
+                : `Paid off in ${formatDuration(debt.paidOffMonth)}`}
               <span className="block text-xs text-slate-400 dark:text-slate-500">
                 {formatCurrency(debt.interestPaid)} interest
               </span>

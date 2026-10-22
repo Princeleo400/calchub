@@ -21,7 +21,7 @@ const example: LoanInputs = {
   feePct: 0,
   extraPerMonth: 0,
 };
-const ex = calculateLoan(example);
+const exampleResult = calculateLoan(example);
 const terms = [36, 48, 60, 72, 84].map((termMonths) => ({
   termMonths,
   ...calculateLoan({ ...example, termMonths }),
@@ -97,9 +97,10 @@ export default function LoanCalculatorPage() {
           <h2>A worked example</h2>
           <p>
             Borrowing {formatCurrency(example.amount)} at {example.rate}% for 5
-            years gives a monthly payment of {formatCurrency(ex.monthlyPayment)}
-            . Over 60 payments you repay {formatCurrency(ex.totalCost)}, of
-            which {formatCurrency(ex.totalInterest)} is interest.
+            years gives a monthly payment of{" "}
+            {formatCurrency(exampleResult.monthlyPayment)}. Over 60 payments you
+            repay {formatCurrency(exampleResult.totalCost)}, of which{" "}
+            {formatCurrency(exampleResult.totalInterest)} is interest.
           </p>
 
           <h2>How the term changes the cost</h2>
@@ -111,7 +112,7 @@ export default function LoanCalculatorPage() {
           </p>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[420px] text-left text-sm tabular-nums">
-              <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              <thead className="border-b border-slate-200 text-xs tracking-wide text-slate-500 uppercase dark:border-slate-700 dark:text-slate-400">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     Term
@@ -128,19 +129,19 @@ export default function LoanCalculatorPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {terms.map((t) => (
-                  <tr key={t.termMonths}>
+                {terms.map((row) => (
+                  <tr key={row.termMonths}>
                     <th scope="row" className="py-2 pr-4 font-normal">
-                      {formatDuration(t.termMonths)}
+                      {formatDuration(row.termMonths)}
                     </th>
                     <td className="py-2 pr-4 text-right">
-                      {formatCurrency(t.monthlyPayment)}
+                      {formatCurrency(row.monthlyPayment)}
                     </td>
                     <td className="py-2 pr-4 text-right">
-                      {formatCurrency(t.totalInterest)}
+                      {formatCurrency(row.totalInterest)}
                     </td>
                     <td className="py-2 text-right">
-                      {formatCurrency(t.totalCost)}
+                      {formatCurrency(row.totalCost)}
                     </td>
                   </tr>
                 ))}

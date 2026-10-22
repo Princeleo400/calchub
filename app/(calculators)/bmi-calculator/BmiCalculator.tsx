@@ -91,14 +91,14 @@ export function BmiCalculator() {
       ? `${formatNumber(result.healthyMinKg, 1)} to ${formatNumber(result.healthyMaxKg, 1)} kg`
       : `${formatNumber(result.healthyMinKg / KG_PER_LB, 0)} to ${formatNumber(result.healthyMaxKg / KG_PER_LB, 0)} lb`;
 
-  const m = heightCm / 100;
+  const heightM = heightCm / 100;
   const formula =
     unit === "metric"
       ? [
           "BMI = weight (kg) ÷ height (m)²",
           "",
-          `height = ${formatNumber(values.cm, 0)} cm = ${m.toFixed(2)} m`,
-          `BMI = ${formatNumber(values.kg, 1)} ÷ ${m.toFixed(2)}² = ${formatNumber(values.kg, 1)} ÷ ${(m * m).toFixed(4)}`,
+          `height = ${formatNumber(values.cm, 0)} cm = ${heightM.toFixed(2)} m`,
+          `BMI = ${formatNumber(values.kg, 1)} ÷ ${heightM.toFixed(2)}² = ${formatNumber(values.kg, 1)} ÷ ${(heightM * heightM).toFixed(4)}`,
           `    = ${formatNumber(result.bmi, 1)}`,
         ]
       : [

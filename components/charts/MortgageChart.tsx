@@ -36,23 +36,33 @@ export function MortgageChart({
       className={`rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900 ${chartVars}`}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-        <h2 id="amortization-heading" className="text-base font-semibold text-slate-900 dark:text-slate-50">
+        <h2
+          id="amortization-heading"
+          className="text-base font-semibold text-slate-900 dark:text-slate-50"
+        >
           {title}
         </h2>
-        <ul className="flex gap-4 text-xs text-slate-600 dark:text-slate-300" aria-label="Legend">
+        <ul
+          className="flex gap-4 text-xs text-slate-600 dark:text-slate-300"
+          aria-label="Legend"
+        >
           <li className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-[var(--series-1)]" aria-hidden />
+            <span
+              className="size-2.5 rounded-sm bg-[var(--series-1)]"
+              aria-hidden
+            />
             Principal
           </li>
           <li className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-[var(--series-2)]" aria-hidden />
+            <span
+              className="size-2.5 rounded-sm bg-[var(--series-2)]"
+              aria-hidden
+            />
             Interest
           </li>
         </ul>
       </div>
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        {note}
-      </p>
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{note}</p>
 
       <div className="mt-4" aria-hidden>
         <AmortizationChart schedule={schedule} />
@@ -60,26 +70,44 @@ export function MortgageChart({
 
       <details className="group mt-4 border-t border-slate-200 pt-3 dark:border-slate-700">
         <summary className="cursor-pointer text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-slate-50">
-          <span className="group-open:hidden">Show the yearly amortization table</span>
+          <span className="group-open:hidden">
+            Show the yearly amortization table
+          </span>
           <span className="hidden group-open:inline">Hide the table</span>
         </summary>
         <div className="mt-3 max-h-96 overflow-auto">
           <table className="w-full text-right text-xs tabular-nums">
-            <caption className="sr-only">Principal, interest and balance by year</caption>
+            <caption className="sr-only">
+              Principal, interest and balance by year
+            </caption>
             <thead className="sticky top-0 bg-white text-slate-500 dark:bg-slate-900 dark:text-slate-400">
               <tr>
-                <th scope="col" className="py-2 pr-3 text-left font-medium">Year</th>
-                <th scope="col" className="py-2 pr-3 font-medium">Principal</th>
-                <th scope="col" className="py-2 pr-3 font-medium">Interest</th>
-                <th scope="col" className="py-2 font-medium">Balance</th>
+                <th scope="col" className="py-2 pr-3 text-left font-medium">
+                  Year
+                </th>
+                <th scope="col" className="py-2 pr-3 font-medium">
+                  Principal
+                </th>
+                <th scope="col" className="py-2 pr-3 font-medium">
+                  Interest
+                </th>
+                <th scope="col" className="py-2 font-medium">
+                  Balance
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700 dark:divide-slate-800 dark:text-slate-200">
               {schedule.map((row) => (
                 <tr key={row.year}>
-                  <th scope="row" className="py-1.5 pr-3 text-left font-normal">{row.year}</th>
-                  <td className="py-1.5 pr-3">{formatCurrency(row.principal)}</td>
-                  <td className="py-1.5 pr-3">{formatCurrency(row.interest)}</td>
+                  <th scope="row" className="py-1.5 pr-3 text-left font-normal">
+                    {row.year}
+                  </th>
+                  <td className="py-1.5 pr-3">
+                    {formatCurrency(row.principal)}
+                  </td>
+                  <td className="py-1.5 pr-3">
+                    {formatCurrency(row.interest)}
+                  </td>
                   <td className="py-1.5">{formatCurrency(row.balance)}</td>
                 </tr>
               ))}

@@ -16,7 +16,7 @@ import type { FaqItem } from "@/lib/seo/jsonLd";
 import { formatCurrency } from "@/lib/utils";
 
 export function generateStaticParams() {
-  return SALARIES.map((s) => ({ salary: salarySlug(s) }));
+  return SALARIES.map((salaryAmount) => ({ salary: salarySlug(salaryAmount) }));
 }
 
 const short = (income: number) => `$${income / 1000}k`;
@@ -51,14 +51,14 @@ export default async function SalaryPage({
   const monthly = income / 12;
   const index = SALARIES.indexOf(income);
   const neighbors = [SALARIES[index - 1], SALARIES[index + 1]].filter(
-    (s): s is number => s !== undefined,
+    (value): value is number => value !== undefined,
   );
   const lowDown = affordFor(income, { downPaymentPct: 3.5 });
-  const debtRows = DEBTS.map((d) => ({
-    debts: d,
-    r: affordFor(income, { monthlyDebts: d }),
+  const debtRows = DEBTS.map((debtAmount) => ({
+    debts: debtAmount,
+    result: affordFor(income, { monthlyDebts: debtAmount }),
   }));
-  const firstBinding = debtRows.find((row) => row.r.limitedBy === "total");
+  const firstBinding = debtRows.find((row) => row.result.limitedBy === "total");
 
   const faqs: FaqItem[] = [
     {
@@ -128,14 +128,15 @@ export default async function SalaryPage({
             year for insurance:
           </p>
           <DataTable
-            headers={["Down payment", ...RATES.map((r) => `At ${r}%`)]}
+            headers={["Down payment", ...RATES.map((rate) => `At ${rate}%`)]}
             numeric={[1, 2, 3]}
-            rows={DOWN.map((d) => [
-              `${d}%`,
+            rows={DOWN.map((downPct) => [
+              `${downPct}%`,
               ...RATES.map((rate) =>
                 formatCurrency(
                   roundPrice(
-                    affordFor(income, { downPaymentPct: d, rate }).maxHomePrice,
+                    affordFor(income, { downPaymentPct: downPct, rate })
+                      .maxHomePrice,
                   ),
                 ),
               ),
@@ -158,10 +159,10 @@ export default async function SalaryPage({
           <DataTable
             headers={["Other debts", "Housing budget", "Home price"]}
             numeric={[1, 2]}
-            rows={debtRows.map(({ debts, r }) => [
+            rows={debtRows.map(({ debts, result }) => [
               debts === 0 ? "None" : `${formatCurrency(debts)} a month`,
-              formatCurrency(r.housingBudget),
-              formatCurrency(roundPrice(r.maxHomePrice)),
+              formatCurrency(result.housingBudget),
+              formatCurrency(roundPrice(result.maxHomePrice)),
             ])}
           />
           <p>
@@ -181,10 +182,12 @@ export default async function SalaryPage({
 
           <h2>Other salaries</h2>
           <ul>
-            {neighbors.map((s) => (
-              <li key={s}>
-                <Link href={`/how-much-house-can-i-afford/${salarySlug(s)}`}>
-                  How much house can I afford on {formatCurrency(s)}?
+            {neighbors.map((neighbor) => (
+              <li key={neighbor}>
+                <Link
+                  href={`/how-much-house-can-i-afford/${salarySlug(neighbor)}`}
+                >
+                  How much house can I afford on {formatCurrency(neighbor)}?
                 </Link>
               </li>
             ))}

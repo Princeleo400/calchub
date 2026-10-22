@@ -17,7 +17,8 @@ export function webApplicationJsonLd(opts: {
     name: opts.name,
     description: opts.description,
     url: `${site.url}${opts.path}`,
-    applicationCategory: opts.category === "health" ? "HealthApplication" : "FinanceApplication",
+    applicationCategory:
+      opts.category === "health" ? "HealthApplication" : "FinanceApplication",
     operatingSystem: "Any",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };
