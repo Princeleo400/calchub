@@ -4,6 +4,7 @@ export type CalculatorSlug =
   | "mortgage-calculator"
   | "home-affordability-calculator"
   | "stamp-duty-calculator"
+  | "mortgage-stress-test-calculator"
   | "loan-calculator"
   | "debt-payoff-calculator"
   | "savings-calculator"

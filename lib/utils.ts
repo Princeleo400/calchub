@@ -1,16 +1,25 @@
 /** Join class names, skipping falsy values. */
-export function cn(...classes: Array<string | false | null | undefined>): string {
+export function cn(
+  ...classes: Array<string | false | null | undefined>
+): string {
   return classes.filter(Boolean).join(" ");
 }
 
 const currencyFormatters = new Map<string, Intl.NumberFormat>();
 
 /** Format money. Whole units by default; pass decimals for cents. */
-export function formatCurrency(value: number, currency = "USD", decimals = 0): string {
+export function formatCurrency(
+  value: number,
+  currency = "USD",
+  decimals = 0,
+): string {
   const key = `${currency}-${decimals}`;
   let fmt = currencyFormatters.get(key);
   if (!fmt) {
-    fmt = new Intl.NumberFormat("en-US", {
+    // Format each currency the way its own readers expect: CAD as "$", not "CA$".
+    const locale =
+      currency === "CAD" ? "en-CA" : currency === "GBP" ? "en-GB" : "en-US";
+    fmt = new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       minimumFractionDigits: decimals,

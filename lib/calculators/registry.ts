@@ -2,6 +2,7 @@ import {
   Calculator,
   CreditCard,
   Flame,
+  Gauge,
   House,
   Landmark,
   PieChart,
@@ -51,6 +52,15 @@ export const calculators: CalculatorMeta[] = [
       "Stamp Duty Land Tax for England and Northern Ireland, including first-time buyer relief.",
     category: "finance",
     icon: Landmark,
+    live: true,
+  },
+  {
+    slug: "mortgage-stress-test-calculator",
+    name: "Canada Mortgage Stress Test",
+    description:
+      "Check if you pass Canada's mortgage stress test and the most you can borrow at the qualifying rate.",
+    category: "finance",
+    icon: Gauge,
     live: true,
   },
   {
