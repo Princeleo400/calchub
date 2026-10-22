@@ -53,8 +53,10 @@ export default function MethodologyPage() {
         <li>Insurance and HOA dues are taken as entered.</li>
         <li>
           PMI is charged only when the down payment is below 20%. It is calculated as the annual PMI rate times the
-          original loan amount, divided by 12, and stops once the balance reaches 78% of the home price, the point
-          at which federal rules require most conventional PMI to end.
+          original loan amount, divided by 12. It stops when the balance on your original payment schedule reaches
+          78% of the home price, or at the loan&apos;s halfway point if that comes first, matching when federal rules
+          require most conventional PMI to end automatically. Extra payments don&apos;t move that date, but they let
+          you ask your lender to cancel sooner, once you owe 80%.
         </li>
         <li>Extra payments go entirely to principal in the month they are made.</li>
         <li>Taxes, insurance and PMI are held constant, although in reality they change over time.</li>

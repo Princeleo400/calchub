@@ -96,3 +96,15 @@ test("formatDuration", () => {
   assert.equal(formatDuration(341), "28 years 5 months");
   assert.equal(formatDuration(1), "1 month");
 });
+
+test("extra payments don't move PMI's automatic end date", () => {
+  const plain = calculateMortgage({ ...base, downPaymentPct: 10 });
+  const extra = calculateMortgage({ ...base, downPaymentPct: 10, extraPerMonth: 500 });
+  assert.equal(extra.pmiEndsMonth, plain.pmiEndsMonth);
+});
+
+test("PMI ends by the loan's midpoint at the latest", () => {
+  // 3% down at 9%: the balance falls slowly, so the midpoint rule kicks in first.
+  const r = calculateMortgage({ ...base, downPaymentPct: 3, rate: 9 });
+  assert.ok(r.pmiEndsMonth !== null && r.pmiEndsMonth <= 180);
+});

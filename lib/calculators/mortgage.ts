@@ -46,7 +46,11 @@ export interface MortgageResult {
   totalPmi: number;
   /** Months until the loan is repaid (shorter than the term with extra payments). */
   payoffMonths: number;
-  /** Month PMI stops (balance reaches 78% of the home price), or null if never charged. */
+  /**
+   * Month PMI stops automatically: when the scheduled balance (ignoring extra
+   * payments) reaches 78% of the home price, or at the loan's midpoint.
+   * Null if PMI is never charged. Borrowers can usually ask to cancel earlier, at 80%.
+   */
   pmiEndsMonth: number | null;
   /** Interest the extra payments save versus the plain schedule. */
   interestSaved: number;
@@ -57,7 +61,7 @@ export interface MortgageResult {
 
 /** PMI is generally required when the loan is above 80% of the home's value. */
 export const PMI_REQUIRED_ABOVE_LTV = 0.8;
-/** Federal law ends borrower-paid PMI once the balance reaches 78% of original value. */
+/** Federal law ends borrower-paid PMI once the scheduled balance reaches 78% of original value. */
 export const PMI_AUTO_ENDS_AT_LTV = 0.78;
 
 /** Standard amortizing payment: P × r(1+r)^n / ((1+r)^n − 1). */
@@ -88,6 +92,8 @@ function amortize(
 ): Amortization {
   const r = annualRatePct / 100 / 12;
   let balance = principal;
+  // PMI's automatic end follows the original schedule, ignoring extra payments.
+  let scheduledBalance = principal;
   let month = 0;
   let totalInterest = 0;
   let totalPmi = 0;
@@ -109,7 +115,14 @@ function amortize(
     yearPrincipal += principalPaid;
     yearInterest += interest;
 
-    if (pmiActive && balance <= pmi.endsBelowBalance) {
+    scheduledBalance -= Math.min(scheduledBalance, scheduled - scheduledBalance * r);
+
+    // Ends at 78% of original value on schedule, or by the loan's midpoint,
+    // whichever comes first (or when the loan is simply paid off).
+    if (
+      pmiActive &&
+      (scheduledBalance <= pmi.endsBelowBalance || month >= maxMonths / 2 || balance <= 0.005)
+    ) {
       pmiActive = false;
       pmiEndsMonth = month;
     }

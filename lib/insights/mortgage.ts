@@ -30,7 +30,9 @@ export function mortgageInsight(inputs: MortgageInputs, r: MortgageResult): stri
   // 3. One useful next step.
   if (r.monthlyPmi > 0 && r.pmiEndsMonth) {
     lines.push(
-      `Because you are putting down less than 20%, PMI adds about ${formatCurrency(r.monthlyPmi)} a month. On this schedule it ends automatically after ${formatDuration(r.pmiEndsMonth)}, once you owe 78% of the home's original value, and you can ask to cancel it earlier at 80%.`,
+      `Because you are putting down less than 20%, PMI adds about ${formatCurrency(r.monthlyPmi)} a month. On this schedule it ends automatically after ${formatDuration(r.pmiEndsMonth)}, ${
+        r.pmiEndsMonth >= (inputs.termYears * 12) / 2 ? "the loan's halfway point" : "once you owe 78% of the home's original value"
+      }, and you can ask to cancel it earlier once you owe 80%.`,
     );
   } else if (inputs.extraPerMonth > 0 && r.monthsSaved > 0) {
     lines.push(
