@@ -66,6 +66,12 @@ export function MobileNav() {
               </ul>
             </div>
           ))}
+          <Link
+            href="/blog"
+            className="mt-4 block rounded-md border-t border-slate-200 px-2 pb-2 pt-4 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            Guides
+          </Link>
         </nav>
       )}
     </div>

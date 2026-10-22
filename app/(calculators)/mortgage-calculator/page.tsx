@@ -149,8 +149,9 @@ export default function MortgageCalculatorPage() {
           {exLowDown.pmiEndsMonth && (
             <p>
               With 10% down in the example, the balance reaches 78% after about{" "}
-              {formatDuration(exLowDown.pmiEndsMonth)} of regular payments. Extra payments get you there
-              sooner. FHA and VA loans have their own mortgage insurance rules.
+              {formatDuration(exLowDown.pmiEndsMonth)} of regular payments. Extra payments don&apos;t change that
+              automatic date, but they get you to 80% sooner, when you can ask to cancel. FHA and VA loans have
+              their own mortgage insurance rules.
             </p>
           )}
 

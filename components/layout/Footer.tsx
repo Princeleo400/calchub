@@ -5,8 +5,8 @@ import { site } from "@/lib/site";
 
 const categories: CalculatorCategory[] = ["finance", "health"];
 
-// These pages are built in Phase 3.
 const companyLinks = [
+  { href: "/blog", label: "Guides" },
   { href: "/about", label: "About" },
   { href: "/methodology", label: "Methodology" },
   { href: "/contact", label: "Contact" },
