@@ -20,7 +20,7 @@ export const metadata = buildMetadata({
 // Worked example, computed with the same function as the calculator.
 const exWeightKg = 150 * KG_PER_LB;
 const exHeightCm = 65 * CM_PER_IN;
-const ex = calculateCalories({
+const exampleResult = calculateCalories({
   sex: "female",
   age: 35,
   weightKg: exWeightKg,
@@ -28,7 +28,7 @@ const ex = calculateCalories({
   activity: "light",
   goal: "lose05",
 });
-const cal = (n: number) => formatNumber(roundCalories(n));
+const cal = (calories: number) => formatNumber(roundCalories(calories));
 
 const faqs: FaqItem[] = [
   {
@@ -106,17 +106,21 @@ export default function CalorieCalculatorPage() {
           <h2>A worked example</h2>
           <p>
             A 35-year-old woman who is 5 ft 5 in (165 cm) and weighs 150 lb (68
-            kg) has a BMR of about {cal(ex.bmr)} calories. If she is lightly
-            active, her TDEE is {cal(ex.bmr)} × 1.375 ≈ {cal(ex.tdee)} calories
-            a day. To lose about half a pound a week, she would aim for roughly{" "}
-            {cal(ex.goals.find((g) => g.id === "lose05")!.calories)} calories a
-            day.
+            kg) has a BMR of about {cal(exampleResult.bmr)} calories. If she is
+            lightly active, her TDEE is {cal(exampleResult.bmr)} × 1.375 ≈{" "}
+            {cal(exampleResult.tdee)} calories a day. To lose about half a pound
+            a week, she would aim for roughly{" "}
+            {cal(
+              exampleResult.goals.find((goal) => goal.id === "lose05")!
+                .calories,
+            )}{" "}
+            calories a day.
           </p>
 
           <h2>Activity levels</h2>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[360px] text-left text-sm tabular-nums">
-              <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              <thead className="border-b border-slate-200 text-xs tracking-wide text-slate-500 uppercase dark:border-slate-700 dark:text-slate-400">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     Level
@@ -130,13 +134,13 @@ export default function CalorieCalculatorPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {ACTIVITY_LEVELS.map((a) => (
-                  <tr key={a.id}>
+                {ACTIVITY_LEVELS.map((level) => (
+                  <tr key={level.id}>
                     <th scope="row" className="py-2 pr-4 font-normal">
-                      {a.label}
+                      {level.label}
                     </th>
-                    <td className="py-2 pr-4">{a.description}</td>
-                    <td className="py-2 text-right">× {a.factor}</td>
+                    <td className="py-2 pr-4">{level.description}</td>
+                    <td className="py-2 text-right">× {level.factor}</td>
                   </tr>
                 ))}
               </tbody>

@@ -4,27 +4,40 @@ import { calculateLoan, solveApr, type LoanInputs } from "./loan.ts";
 import { monthlyPayment } from "./mortgage.ts";
 
 const near = (actual: number, expected: number, tolerance = 0.01) =>
-  assert.ok(Math.abs(actual - expected) <= tolerance, `expected ${expected}, got ${actual}`);
+  assert.ok(
+    Math.abs(actual - expected) <= tolerance,
+    `expected ${expected}, got ${actual}`,
+  );
 
-const base: LoanInputs = { amount: 25_000, rate: 7, termMonths: 60, feePct: 0, extraPerMonth: 0 };
+const base: LoanInputs = {
+  amount: 25_000,
+  rate: 7,
+  termMonths: 60,
+  feePct: 0,
+  extraPerMonth: 0,
+};
 
 test("payments match known examples", () => {
   near(calculateLoan(base).monthlyPayment, 495.03); // $25k, 7%, 60 months
-  near(calculateLoan({ ...base, amount: 10_000, rate: 5, termMonths: 36 }).monthlyPayment, 299.71);
+  near(
+    calculateLoan({ ...base, amount: 10_000, rate: 5, termMonths: 36 })
+      .monthlyPayment,
+    299.71,
+  );
 });
 
 test("total interest and cost", () => {
-  const r = calculateLoan(base);
-  near(r.totalInterest, 495.0301 * 60 - 25_000, 0.5);
-  near(r.totalCost, 25_000 + r.totalInterest);
-  assert.equal(r.payoffMonths, 60);
-  assert.equal(r.schedule.length, 5);
+  const result = calculateLoan(base);
+  near(result.totalInterest, 495.0301 * 60 - 25_000, 0.5);
+  near(result.totalCost, 25_000 + result.totalInterest);
+  assert.equal(result.payoffMonths, 60);
+  assert.equal(result.schedule.length, 5);
 });
 
 test("short loans still get a schedule row", () => {
-  const r = calculateLoan({ ...base, termMonths: 9 });
-  assert.equal(r.schedule.length, 1);
-  near(r.schedule[0].balance, 0);
+  const result = calculateLoan({ ...base, termMonths: 9 });
+  assert.equal(result.schedule.length, 1);
+  near(result.schedule[0].balance, 0);
 });
 
 test("APR equals the rate with no fee", () => {
@@ -32,11 +45,17 @@ test("APR equals the rate with no fee", () => {
 });
 
 test("a fee raises the APR above the rate", () => {
-  const r = calculateLoan({ ...base, amount: 10_000, rate: 10, termMonths: 36, feePct: 5 });
-  near(r.fee, 500);
-  assert.ok(r.apr > 10);
+  const result = calculateLoan({
+    ...base,
+    amount: 10_000,
+    rate: 10,
+    termMonths: 36,
+    feePct: 5,
+  });
+  near(result.fee, 500);
+  assert.ok(result.apr > 10);
   // At the APR, the money actually received is repaid by the same payment.
-  near(monthlyPayment(9_500, r.apr, 3), r.monthlyPayment, 0.001);
+  near(monthlyPayment(9_500, result.apr, 3), result.monthlyPayment, 0.001);
 });
 
 test("solveApr handles a zero-interest, zero-fee case", () => {

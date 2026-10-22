@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Calculator, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { calculatorsByCategory, categoryLabels } from "@/lib/calculators/registry";
+import {
+  calculatorsByCategory,
+  categoryLabels,
+} from "@/lib/calculators/registry";
 import type { CalculatorCategory } from "@/lib/types";
 import { site } from "@/lib/site";
 
 const sections: Array<{ category: CalculatorCategory; intro: string }> = [
-  { category: "finance", intro: "Mortgages, loans and debt, with every payment broken down." },
-  { category: "health", intro: "Body mass index and daily calorie needs, based on CDC and published formulas." },
+  {
+    category: "finance",
+    intro: "Mortgages, loans and debt, with every payment broken down.",
+  },
+  {
+    category: "health",
+    intro:
+      "Body mass index and daily calorie needs, based on CDC and published formulas.",
+  },
 ];
 
 const principles = [
@@ -52,8 +62,9 @@ export default function HomePage() {
           {site.tagline}
         </h1>
         <p className="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-          Work out a mortgage payment, plan your way out of debt or check your BMI in seconds. Clear answers, the
-          formulas behind them, and no sign-up.
+          Work out a mortgage payment, plan your way out of debt or check your
+          BMI in seconds. Clear answers, the formulas behind them, and no
+          sign-up.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -73,11 +84,21 @@ export default function HomePage() {
       </section>
 
       {sections.map(({ category, intro }) => (
-        <section key={category} id={category} aria-labelledby={`${category}-heading`} className="mt-14 scroll-mt-20">
-          <h2 id={`${category}-heading`} className="text-xl font-semibold text-slate-900 dark:text-slate-50">
+        <section
+          key={category}
+          id={category}
+          aria-labelledby={`${category}-heading`}
+          className="mt-14 scroll-mt-20"
+        >
+          <h2
+            id={`${category}-heading`}
+            className="text-xl font-semibold text-slate-900 dark:text-slate-50"
+          >
             {categoryLabels[category]} calculators
           </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{intro}</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {intro}
+          </p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {calculatorsByCategory(category).map((calc) => {
               const Icon = calc.icon;
@@ -110,8 +131,14 @@ export default function HomePage() {
         </section>
       ))}
 
-      <section aria-labelledby="how-heading" className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800">
-        <h2 id="how-heading" className="text-xl font-semibold text-slate-900 dark:text-slate-50">
+      <section
+        aria-labelledby="how-heading"
+        className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800"
+      >
+        <h2
+          id="how-heading"
+          className="text-xl font-semibold text-slate-900 dark:text-slate-50"
+        >
           How {site.name} works
         </h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
@@ -120,8 +147,12 @@ export default function HomePage() {
               <span className="flex size-9 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                 <Icon className="size-4" aria-hidden />
               </span>
-              <h3 className="mt-3 text-base font-semibold text-slate-900 dark:text-slate-50">{title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{body}</p>
+              <h3 className="mt-3 text-base font-semibold text-slate-900 dark:text-slate-50">
+                {title}
+              </h3>
+              <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                {body}
+              </p>
               <Link
                 href={href}
                 className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"

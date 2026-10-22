@@ -38,11 +38,11 @@ export function canadianPayment(
   annualPct: number,
   years: number,
 ): number {
-  const n = Math.round(years * 12);
-  if (principal <= 0 || n <= 0) return 0;
-  const r = canadianMonthlyRate(annualPct);
-  if (r === 0) return principal / n;
-  return (principal * r) / (1 - Math.pow(1 + r, -n));
+  const payments = Math.round(years * 12);
+  if (principal <= 0 || payments <= 0) return 0;
+  const monthlyRate = canadianMonthlyRate(annualPct);
+  if (monthlyRate === 0) return principal / payments;
+  return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -payments));
 }
 
 /** Largest principal a given monthly payment supports. */
@@ -51,11 +51,11 @@ export function canadianPrincipalFor(
   annualPct: number,
   years: number,
 ): number {
-  const n = Math.round(years * 12);
-  if (payment <= 0 || n <= 0) return 0;
-  const r = canadianMonthlyRate(annualPct);
-  if (r === 0) return payment * n;
-  return (payment * (1 - Math.pow(1 + r, -n))) / r;
+  const payments = Math.round(years * 12);
+  if (payment <= 0 || payments <= 0) return 0;
+  const monthlyRate = canadianMonthlyRate(annualPct);
+  if (monthlyRate === 0) return payment * payments;
+  return (payment * (1 - Math.pow(1 + monthlyRate, -payments))) / monthlyRate;
 }
 
 export function qualifyingRate(contractRate: number): number {
@@ -78,7 +78,9 @@ export function premiumRate(
   ltvPct: number,
   thirtyYear: boolean,
 ): number | null {
-  const tier = CANADA_RULES.premiums.find((p) => ltvPct <= p.maxLtv + 1e-9);
+  const tier = CANADA_RULES.premiums.find(
+    (premium) => ltvPct <= premium.maxLtv + 1e-9,
+  );
   if (!tier) return null;
   if (tier.rate === 0) return 0;
   return tier.rate + (thirtyYear ? CANADA_RULES.thirtyYearSurcharge : 0);
@@ -123,23 +125,25 @@ export interface StressTestResult {
   maxPrice: number;
 }
 
-export function calculateStressTest(i: StressTestInputs): StressTestResult {
-  const r = assess(i);
-  return { ...r, maxPrice: maxPurchasePrice(i) };
+export function calculateStressTest(
+  inputs: StressTestInputs,
+): StressTestResult {
+  const result = assess(inputs);
+  return { ...result, maxPrice: maxPurchasePrice(inputs) };
 }
 
 /**
  * Passing is monotonic in price (a higher price only raises the mortgage, the
  * ratios and the minimum down payment), so bisection finds the boundary.
  */
-function maxPurchasePrice(i: StressTestInputs): number {
-  const down = Math.max(0, i.downPayment);
+function maxPurchasePrice(inputs: StressTestInputs): number {
+  const down = Math.max(0, inputs.downPayment);
   const passesAt = (price: number) =>
-    assess({ ...i, price, downPayment: down }).passes;
+    assess({ ...inputs, price, downPayment: down }).passes;
   let low = down;
-  let high = down + assess(i).maxMortgage + 1;
+  let high = down + assess(inputs).maxMortgage + 1;
   if (!passesAt(low + 1)) return 0;
-  for (let k = 0; k < 60; k++) {
+  for (let step = 0; step < 60; step++) {
     const mid = (low + high) / 2;
     if (passesAt(mid)) low = mid;
     else high = mid;
@@ -147,31 +151,31 @@ function maxPurchasePrice(i: StressTestInputs): number {
   return low;
 }
 
-function assess(i: StressTestInputs): Omit<StressTestResult, "maxPrice"> {
-  const price = Math.max(0, i.price);
-  const down = Math.min(price, Math.max(0, i.downPayment));
+function assess(inputs: StressTestInputs): Omit<StressTestResult, "maxPrice"> {
+  const price = Math.max(0, inputs.price);
+  const down = Math.min(price, Math.max(0, inputs.downPayment));
   const minDown = minimumDownPayment(price);
   const base = price - down;
   const ltv = price > 0 ? (base / price) * 100 : 0;
   const insured = ltv > 80;
-  const thirtyYear = i.amortizationYears > 25;
+  const thirtyYear = inputs.amortizationYears > 25;
   const rate = insured ? premiumRate(ltv, thirtyYear) : 0;
   const problem = down + 0.005 < minDown || rate === null ? "downTooLow" : null;
 
   const premiumRatePct = rate ?? 0;
   const premium = (base * premiumRatePct) / 100;
   const mortgage = base + premium;
-  const qRate = qualifyingRate(i.contractRate);
+  const qRate = qualifyingRate(inputs.contractRate);
 
-  const monthlyIncome = Math.max(0, i.annualIncome) / 12;
+  const monthlyIncome = Math.max(0, inputs.annualIncome) / 12;
   const housingExtras =
-    Math.max(0, i.propertyTaxPerYear) / 12 +
-    Math.max(0, i.heatingPerMonth) +
-    Math.max(0, i.condoFeesPerMonth) * CANADA_RULES.condoFeeShare;
+    Math.max(0, inputs.propertyTaxPerYear) / 12 +
+    Math.max(0, inputs.heatingPerMonth) +
+    Math.max(0, inputs.condoFeesPerMonth) * CANADA_RULES.condoFeeShare;
   const paymentAtQualifying = canadianPayment(
     mortgage,
     qRate,
-    i.amortizationYears,
+    inputs.amortizationYears,
   );
   const gds =
     monthlyIncome > 0
@@ -181,7 +185,7 @@ function assess(i: StressTestInputs): Omit<StressTestResult, "maxPrice"> {
     monthlyIncome > 0
       ? ((paymentAtQualifying +
           housingExtras +
-          Math.max(0, i.otherDebtsPerMonth)) /
+          Math.max(0, inputs.otherDebtsPerMonth)) /
           monthlyIncome) *
         100
       : 0;
@@ -190,12 +194,12 @@ function assess(i: StressTestInputs): Omit<StressTestResult, "maxPrice"> {
     (monthlyIncome * CANADA_RULES.maxGds) / 100 - housingExtras,
     (monthlyIncome * CANADA_RULES.maxTds) / 100 -
       housingExtras -
-      Math.max(0, i.otherDebtsPerMonth),
+      Math.max(0, inputs.otherDebtsPerMonth),
   );
   const maxMortgage = canadianPrincipalFor(
     Math.max(0, budget),
     qRate,
-    i.amortizationYears,
+    inputs.amortizationYears,
   );
 
   const passesGds = monthlyIncome > 0 && gds <= CANADA_RULES.maxGds + 1e-9;
@@ -211,8 +215,8 @@ function assess(i: StressTestInputs): Omit<StressTestResult, "maxPrice"> {
     qualifyingRate: qRate,
     paymentAtContract: canadianPayment(
       mortgage,
-      i.contractRate,
-      i.amortizationYears,
+      inputs.contractRate,
+      inputs.amortizationYears,
     ),
     paymentAtQualifying,
     gds,

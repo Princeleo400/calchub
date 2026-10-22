@@ -10,7 +10,11 @@ interface CalculatorPanelProps {
 }
 
 /** Two-column calculator: inputs on the left, results on the right. Stacks on mobile. */
-export function CalculatorPanel({ inputs, results, footer }: CalculatorPanelProps) {
+export function CalculatorPanel({
+  inputs,
+  results,
+  footer,
+}: CalculatorPanelProps) {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">

@@ -72,8 +72,8 @@ export function NumberField({
   function parse(raw: string): number | null {
     const cleaned = raw.replace(/[,\s]/g, "");
     if (cleaned === "" || cleaned === "-" || cleaned === ".") return null;
-    const n = Number(cleaned);
-    return Number.isFinite(n) ? n : null;
+    const parsedNumber = Number(cleaned);
+    return Number.isFinite(parsedNumber) ? parsedNumber : null;
   }
 
   function handleChange(raw: string) {
@@ -81,17 +81,21 @@ export function NumberField({
     const pattern = decimals > 0 ? /^-?[\d,\s]*\.?\d*$/ : /^-?[\d,\s]*$/;
     if (!pattern.test(raw)) return;
     setDraft(raw);
-    const n = parse(raw);
-    if (n === null) return;
-    if ((min !== undefined && n < min) || (max !== undefined && n > max)) return;
-    onChange(n);
+    const typedNumber = parse(raw);
+    if (typedNumber === null) return;
+    if (
+      (min !== undefined && typedNumber < min) ||
+      (max !== undefined && typedNumber > max)
+    )
+      return;
+    onChange(typedNumber);
   }
 
   return (
     <div>
       <label
         htmlFor={inputId}
-        className="block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400"
+        className="block text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400"
       >
         {label}
       </label>
@@ -103,14 +107,18 @@ export function NumberField({
             : "border-slate-300 focus-within:border-blue-500 focus-within:ring-blue-500/30 dark:border-slate-600",
         )}
       >
-        {prefix && <span className="pl-3 text-sm text-slate-400 dark:text-slate-500">{prefix}</span>}
+        {prefix && (
+          <span className="pl-3 text-sm text-slate-400 dark:text-slate-500">
+            {prefix}
+          </span>
+        )}
         <input
           id={inputId}
           type="text"
           inputMode={decimals > 0 ? "decimal" : "numeric"}
           autoComplete="off"
           value={text}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={(event) => handleChange(event.target.value)}
           onFocus={() => setDraft(display(value, decimals, false))}
           onBlur={() => setDraft(null)}
           aria-invalid={error ? true : undefined}
@@ -122,7 +130,9 @@ export function NumberField({
           )}
         />
         {suffix && (
-          <span className="whitespace-nowrap pr-3 text-sm text-slate-400 dark:text-slate-500">{suffix}</span>
+          <span className="pr-3 text-sm whitespace-nowrap text-slate-400 dark:text-slate-500">
+            {suffix}
+          </span>
         )}
       </div>
       {error ? (
@@ -130,7 +140,10 @@ export function NumberField({
           {error}
         </p>
       ) : hint ? (
-        <p id={hintId} className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+        <p
+          id={hintId}
+          className="mt-1 text-xs text-slate-400 dark:text-slate-500"
+        >
           {hint}
         </p>
       ) : null}

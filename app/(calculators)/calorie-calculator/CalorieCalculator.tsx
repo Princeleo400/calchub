@@ -50,23 +50,28 @@ const SEXES = [
   { value: "male", label: "Male" },
 ] as const;
 
-const ACTIVITY_OPTIONS = ACTIVITY_LEVELS.map((a) => ({
-  value: a.id,
-  label: `${a.label}: ${a.description}`,
+const ACTIVITY_OPTIONS = ACTIVITY_LEVELS.map((level) => ({
+  value: level.id,
+  label: `${level.label}: ${level.description}`,
 }));
-const GOAL_OPTIONS = GOALS.map((g) => ({ value: g.id, label: g.label }));
+const GOAL_OPTIONS = GOALS.map((goal) => ({
+  value: goal.id,
+  label: goal.label,
+}));
 
-const kcal = (n: number) => formatNumber(roundCalories(n));
+const kcal = (calories: number) => formatNumber(roundCalories(calories));
 
 export function CalorieCalculator() {
   const { values, update, replace } = useShareableUrl(DEFAULTS);
   const unit: Unit = values.unit === "metric" ? "metric" : "imperial";
   const sex: Sex = values.sex === "male" ? "male" : "female";
   const activity = (
-    ACTIVITY_LEVELS.some((a) => a.id === values.act) ? values.act : "light"
+    ACTIVITY_LEVELS.some((level) => level.id === values.act)
+      ? values.act
+      : "light"
   ) as ActivityId;
   const goal = (
-    GOALS.some((g) => g.id === values.goal) ? values.goal : "maintain"
+    GOALS.some((option) => option.id === values.goal) ? values.goal : "maintain"
   ) as GoalId;
 
   const heightCm =
@@ -301,17 +306,19 @@ function GoalTable({
       <table className="mt-3 w-full text-sm tabular-nums">
         <caption className="sr-only">Estimated daily calories by goal</caption>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-          {goals.map((g) => (
+          {goals.map((row) => (
             <tr
-              key={g.id}
-              className={cn(g.id === selected && "bg-blue-50 dark:bg-blue-950")}
+              key={row.id}
+              className={cn(
+                row.id === selected && "bg-blue-50 dark:bg-blue-950",
+              )}
             >
               <th
                 scope="row"
-                className="py-2.5 pl-2 pr-4 text-left font-normal text-slate-700 dark:text-slate-200"
+                className="py-2.5 pr-4 pl-2 text-left font-normal text-slate-700 dark:text-slate-200"
               >
-                {g.label}
-                {g.belowBmr && (
+                {row.label}
+                {row.belowBmr && (
                   <span className="ml-2 text-xs text-amber-700 dark:text-amber-400">
                     Below resting needs
                   </span>
@@ -320,12 +327,12 @@ function GoalTable({
               <td
                 className={cn(
                   "py-2.5 pr-2 text-right",
-                  g.id === selected
+                  row.id === selected
                     ? "font-semibold text-slate-900 dark:text-slate-50"
                     : "text-slate-700 dark:text-slate-200",
                 )}
               >
-                {formatNumber(roundCalories(g.calories))} cal
+                {formatNumber(roundCalories(row.calories))} cal
               </td>
             </tr>
           ))}

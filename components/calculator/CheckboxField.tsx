@@ -22,7 +22,7 @@ export function CheckboxField({
         id={id}
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={(event) => onChange(event.target.checked)}
         aria-describedby={hint ? `${id}-hint` : undefined}
         className="mt-0.5 size-4 shrink-0 rounded border-slate-300 accent-blue-600 dark:border-slate-600"
       />

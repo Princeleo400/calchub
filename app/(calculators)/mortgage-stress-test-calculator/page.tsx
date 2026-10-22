@@ -21,7 +21,7 @@ export const metadata = buildMetadata({
   path: "/mortgage-stress-test-calculator",
 });
 
-const cad = (n: number) => formatCurrency(n, "CAD");
+const cad = (amount: number) => formatCurrency(amount, "CAD");
 
 const example: StressTestInputs = {
   price: 700_000,
@@ -34,7 +34,7 @@ const example: StressTestInputs = {
   condoFeesPerMonth: 0,
   otherDebtsPerMonth: 0,
 };
-const ex = calculateStressTest(example);
+const exampleResult = calculateStressTest(example);
 const exLowIncome = calculateStressTest({ ...example, annualIncome: 120_000 });
 
 // The same rate compounded semi-annually (Canada) vs monthly (US-style).
@@ -129,21 +129,24 @@ export default function StressTestPage() {
             A household earning {cad(example.annualIncome)} buys a{" "}
             {cad(example.price)} home with {cad(example.downPayment)} down at a{" "}
             {example.contractRate}% rate, over 25 years. The mortgage is{" "}
-            {cad(ex.mortgage)}.
+            {cad(exampleResult.mortgage)}.
           </p>
           <ul>
             <li>
-              Payment at {example.contractRate}%: {cad(ex.paymentAtContract)} a
-              month
+              Payment at {example.contractRate}%:{" "}
+              {cad(exampleResult.paymentAtContract)} a month
             </li>
             <li>
               Payment at the qualifying rate of{" "}
-              {formatPercent(ex.qualifyingRate, 2)}:{" "}
-              {cad(ex.paymentAtQualifying)} a month
+              {formatPercent(exampleResult.qualifyingRate, 2)}:{" "}
+              {cad(exampleResult.paymentAtQualifying)} a month
             </li>
             <li>
-              GDS {formatPercent(ex.gds, 1)} and TDS {formatPercent(ex.tds, 1)}:{" "}
-              <strong>{ex.passes ? "passes" : "doesn't pass"}</strong>
+              GDS {formatPercent(exampleResult.gds, 1)} and TDS{" "}
+              {formatPercent(exampleResult.tds, 1)}:{" "}
+              <strong>
+                {exampleResult.passes ? "passes" : "doesn't pass"}
+              </strong>
             </li>
           </ul>
           <p>
@@ -158,9 +161,9 @@ export default function StressTestPage() {
           <DataTable
             headers={["Your contract rate", "You qualify at"]}
             numeric={[1]}
-            rows={RATES.map((r) => [
-              formatPercent(r, 2),
-              formatPercent(qualifyingRate(r), 2),
+            rows={RATES.map((rate) => [
+              formatPercent(rate, 2),
+              formatPercent(qualifyingRate(rate), 2),
             ])}
           />
           <p>

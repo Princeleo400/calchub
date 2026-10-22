@@ -19,7 +19,7 @@ export const metadata = buildMetadata({
 });
 
 // Healthy weight ranges by height, computed from the same formula as the calculator.
-const heightsIn = Array.from({ length: 19 }, (_, i) => 58 + i); // 4 ft 10 in to 6 ft 4 in
+const heightsIn = Array.from({ length: 19 }, (_value, index) => 58 + index); // 4 ft 10 in to 6 ft 4 in
 const table = heightsIn.map((inches) => {
   const range = healthyWeightRangeKg(inches * CM_PER_IN);
   return {
@@ -117,7 +117,7 @@ export default function BmiCalculatorPage() {
           </p>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[320px] text-left text-sm tabular-nums">
-              <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              <thead className="border-b border-slate-200 text-xs tracking-wide text-slate-500 uppercase dark:border-slate-700 dark:text-slate-400">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     BMI
@@ -128,16 +128,16 @@ export default function BmiCalculatorPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {BMI_CATEGORIES.map((c) => (
-                  <tr key={c.id}>
+                {BMI_CATEGORIES.map((category) => (
+                  <tr key={category.id}>
                     <td className="py-2 pr-4">
-                      {c.min === 0
+                      {category.min === 0
                         ? "Below 18.5"
-                        : c.max === Infinity
-                          ? `${c.min} or higher`
-                          : `${c.min} to ${formatNumber(c.max - 0.1, 1)}`}
+                        : category.max === Infinity
+                          ? `${category.min} or higher`
+                          : `${category.min} to ${formatNumber(category.max - 0.1, 1)}`}
                     </td>
-                    <td className="py-2">{c.label}</td>
+                    <td className="py-2">{category.label}</td>
                   </tr>
                 ))}
               </tbody>
@@ -151,7 +151,7 @@ export default function BmiCalculatorPage() {
           </p>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[420px] text-left text-sm tabular-nums">
-              <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              <thead className="border-b border-slate-200 text-xs tracking-wide text-slate-500 uppercase dark:border-slate-700 dark:text-slate-400">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     Height

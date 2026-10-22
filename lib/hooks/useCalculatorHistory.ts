@@ -1,7 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useMemo, useSyncExternalStore } from "react";
-import type { CalculationRecord, CalculatorInputs, CalculatorSlug } from "@/lib/types";
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useSyncExternalStore,
+} from "react";
+import type {
+  CalculationRecord,
+  CalculatorInputs,
+  CalculatorSlug,
+} from "@/lib/types";
 
 const STORAGE_KEY = "calchub_history";
 const CHANGE_EVENT = "calchub-history-change";
@@ -34,7 +44,10 @@ function readAll(): CalculationRecord[] {
 
 function writeAll(records: CalculationRecord[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records.slice(0, MAX_TOTAL)));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(records.slice(0, MAX_TOTAL)),
+    );
   } catch {
     // Storage full or blocked: history is a convenience, so fail quietly.
   }
@@ -42,7 +55,8 @@ function writeAll(records: CalculationRecord[]): void {
 }
 
 function subscribe(onChange: () => void): () => void {
-  const onStorage = (e: StorageEvent) => e.key === STORAGE_KEY && onChange();
+  const onStorage = (event: StorageEvent) =>
+    event.key === STORAGE_KEY && onChange();
   window.addEventListener("storage", onStorage); // other tabs
   window.addEventListener(CHANGE_EVENT, onChange); // this tab
   return () => {
@@ -53,21 +67,24 @@ function subscribe(onChange: () => void): () => void {
 
 function isRecord(value: unknown): value is CalculationRecord {
   if (typeof value !== "object" || value === null) return false;
-  const r = value as Record<string, unknown>;
+  const record = value as Record<string, unknown>;
   return (
-    typeof r.id === "string" &&
-    typeof r.calculator === "string" &&
-    typeof r.result === "string" &&
-    typeof r.summary === "string" &&
-    typeof r.timestamp === "number" &&
-    typeof r.inputs === "object" &&
-    r.inputs !== null
+    typeof record.id === "string" &&
+    typeof record.calculator === "string" &&
+    typeof record.result === "string" &&
+    typeof record.summary === "string" &&
+    typeof record.timestamp === "number" &&
+    typeof record.inputs === "object" &&
+    record.inputs !== null
   );
 }
 
-function sameInputs(a: CalculatorInputs, b: CalculatorInputs): boolean {
-  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-  for (const key of keys) if (a[key] !== b[key]) return false;
+function sameInputs(
+  first: CalculatorInputs,
+  second: CalculatorInputs,
+): boolean {
+  const keys = new Set([...Object.keys(first), ...Object.keys(second)]);
+  for (const key of keys) if (first[key] !== second[key]) return false;
   return true;
 }
 
@@ -84,27 +101,33 @@ export function useCalculatorHistory(calculator: CalculatorSlug) {
   const all = useSyncExternalStore(subscribe, readAll, () => EMPTY);
 
   const records = useMemo(
-    () => all.filter((r) => r.calculator === calculator).slice(0, MAX_PER_CALCULATOR),
+    () =>
+      all
+        .filter((record) => record.calculator === calculator)
+        .slice(0, MAX_PER_CALCULATOR),
     [all, calculator],
   );
 
   const add = useCallback(
     (entry: Omit<CalculationRecord, "id" | "timestamp" | "calculator">) => {
       const current = readAll();
-      const latest = current.find((r) => r.calculator === calculator);
+      const latest = current.find((record) => record.calculator === calculator);
       // Skip exact repeats of the most recent calculation.
       if (latest && sameInputs(latest.inputs, entry.inputs)) return;
-      writeAll([{ ...entry, calculator, id: newId(), timestamp: Date.now() }, ...current]);
+      writeAll([
+        { ...entry, calculator, id: newId(), timestamp: Date.now() },
+        ...current,
+      ]);
     },
     [calculator],
   );
 
   const remove = useCallback((id: string) => {
-    writeAll(readAll().filter((r) => r.id !== id));
+    writeAll(readAll().filter((record) => record.id !== id));
   }, []);
 
   const clear = useCallback(() => {
-    writeAll(readAll().filter((r) => r.calculator !== calculator));
+    writeAll(readAll().filter((record) => record.calculator !== calculator));
   }, [calculator]);
 
   return { records, add, remove, clear };
@@ -124,7 +147,15 @@ export function useRecordCalculation(opts: {
   enabled?: boolean;
   delay?: number;
 }) {
-  const { calculator, inputs, defaults, result, summary, enabled = true, delay = 1500 } = opts;
+  const {
+    calculator,
+    inputs,
+    defaults,
+    result,
+    summary,
+    enabled = true,
+    delay = 1500,
+  } = opts;
   const { add } = useCalculatorHistory(calculator);
   // Reads the latest result and summary when it fires, without re-arming the timer.
   const save = useEffectEvent(() => add({ result, summary, inputs }));

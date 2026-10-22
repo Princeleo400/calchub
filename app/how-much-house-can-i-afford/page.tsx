@@ -33,17 +33,17 @@ export default function AffordBySalaryPage() {
       <DataTable
         headers={["Salary", "Monthly housing budget", "Home price"]}
         numeric={[1, 2]}
-        rows={SALARIES.map((s) => {
-          const r = affordFor(s);
+        rows={SALARIES.map((salary) => {
+          const result = affordFor(salary);
           return [
             <Link
-              key={s}
-              href={`/how-much-house-can-i-afford/${salarySlug(s)}`}
+              key={salary}
+              href={`/how-much-house-can-i-afford/${salarySlug(salary)}`}
             >
-              {formatCurrency(s)}
+              {formatCurrency(salary)}
             </Link>,
-            formatCurrency(r.housingBudget),
-            formatCurrency(roundPrice(r.maxHomePrice)),
+            formatCurrency(result.housingBudget),
+            formatCurrency(roundPrice(result.maxHomePrice)),
           ];
         })}
       />

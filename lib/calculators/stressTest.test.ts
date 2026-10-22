@@ -66,15 +66,15 @@ const base: StressTestInputs = {
 };
 
 test("ratios use the qualifying rate and CMHC's GDS/TDS formula", () => {
-  const r = calculateStressTest(base);
-  assert.equal(r.insured, false);
-  assert.equal(r.premium, 0);
-  near(r.mortgage, 480_000);
-  assert.equal(r.qualifyingRate, 6.5);
+  const result = calculateStressTest(base);
+  assert.equal(result.insured, false);
+  assert.equal(result.premium, 0);
+  near(result.mortgage, 480_000);
+  assert.equal(result.qualifyingRate, 6.5);
   const pay = canadianPayment(480_000, 6.5, 25);
-  near(r.paymentAtQualifying, pay);
-  near(r.gds, ((pay + 400 + 100) / 12_500) * 100, 1e-9);
-  assert.ok(r.paymentAtContract < r.paymentAtQualifying);
+  near(result.paymentAtQualifying, pay);
+  near(result.gds, ((pay + 400 + 100) / 12_500) * 100, 1e-9);
+  assert.ok(result.paymentAtContract < result.paymentAtQualifying);
 });
 
 test("condo fees count at 50% and other debts only in TDS", () => {
@@ -87,34 +87,34 @@ test("condo fees count at 50% and other debts only in TDS", () => {
 });
 
 test("insured purchase adds the premium to the mortgage", () => {
-  const r = calculateStressTest({
+  const result = calculateStressTest({
     ...base,
     price: 500_000,
     downPayment: 50_000,
   });
-  assert.equal(r.insured, true);
-  assert.equal(r.premiumRatePct, 3.1);
-  near(r.premium, 450_000 * 0.031);
-  near(r.mortgage, 450_000 * 1.031);
+  assert.equal(result.insured, true);
+  assert.equal(result.premiumRatePct, 3.1);
+  near(result.premium, 450_000 * 0.031);
+  near(result.mortgage, 450_000 * 1.031);
 });
 
 test("down payment below the minimum is flagged", () => {
-  const r = calculateStressTest({
+  const result = calculateStressTest({
     ...base,
     price: 900_000,
     downPayment: 45_000,
   });
-  assert.equal(r.problem, "downTooLow");
-  assert.equal(r.passes, false);
+  assert.equal(result.problem, "downTooLow");
+  assert.equal(result.passes, false);
 });
 
 test("max mortgage sits exactly at the binding limit", () => {
   // A large down payment keeps the purchase uninsured, so no premium is added.
   const big = { ...base, downPayment: 400_000 };
-  const r = calculateStressTest(big);
+  const result = calculateStressTest(big);
   const atMax = calculateStressTest({
     ...big,
-    price: r.maxMortgage + big.downPayment,
+    price: result.maxMortgage + big.downPayment,
   });
   assert.equal(atMax.insured, false);
   // At the maximum, one of the ratios equals its limit and both pass.
@@ -123,21 +123,25 @@ test("max mortgage sits exactly at the binding limit", () => {
 });
 
 test("not enough income fails", () => {
-  const r = calculateStressTest({ ...base, annualIncome: 80_000 });
-  assert.equal(r.passes, false);
-  assert.equal(r.passesGds, false);
+  const result = calculateStressTest({ ...base, annualIncome: 80_000 });
+  assert.equal(result.passes, false);
+  assert.equal(result.passesGds, false);
 });
 
 test("max price passes, and a little more fails", () => {
   for (const downPayment of [30_000, 120_000, 400_000]) {
-    const r = calculateStressTest({ ...base, downPayment });
-    assert.ok(r.maxPrice > downPayment);
+    const result = calculateStressTest({ ...base, downPayment });
+    assert.ok(result.maxPrice > downPayment);
     assert.ok(
-      calculateStressTest({ ...base, downPayment, price: r.maxPrice }).passes,
+      calculateStressTest({ ...base, downPayment, price: result.maxPrice })
+        .passes,
     );
     assert.equal(
-      calculateStressTest({ ...base, downPayment, price: r.maxPrice + 100 })
-        .passes,
+      calculateStressTest({
+        ...base,
+        downPayment,
+        price: result.maxPrice + 100,
+      }).passes,
       false,
     );
   }
@@ -146,10 +150,10 @@ test("max price passes, and a little more fails", () => {
 test("a small down payment caps the price via the minimum down payment rule", () => {
   // $30,000 down: 5% of the first $500,000 ($25,000) + 10% of the rest,
   // so $30,000 covers up to $550,000 (and this income would allow more).
-  const r = calculateStressTest({
+  const result = calculateStressTest({
     ...base,
     annualIncome: 400_000,
     downPayment: 30_000,
   });
-  near(r.maxPrice, 550_000, 1);
+  near(result.maxPrice, 550_000, 1);
 });

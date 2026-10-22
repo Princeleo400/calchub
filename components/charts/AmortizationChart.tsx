@@ -1,6 +1,14 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { YearRow } from "@/lib/calculators/mortgage";
 import { formatCurrency } from "@/lib/utils";
 
@@ -18,30 +26,56 @@ interface TooltipPayload {
   payload?: YearRow;
 }
 
-function ChartTooltip({ active, payload }: { active?: boolean; payload?: TooltipPayload[] }) {
+function ChartTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}) {
   const row = payload?.[0]?.payload;
   if (!active || !row) return null;
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900">
-      <p className="font-semibold text-slate-900 dark:text-slate-50">Year {row.year}</p>
+      <p className="font-semibold text-slate-900 dark:text-slate-50">
+        Year {row.year}
+      </p>
       <p className="mt-1 flex items-center gap-2 text-slate-600 dark:text-slate-300">
-        <span className="size-2 rounded-sm" style={{ background: PRINCIPAL }} aria-hidden />
+        <span
+          className="size-2 rounded-sm"
+          style={{ background: PRINCIPAL }}
+          aria-hidden
+        />
         Principal {formatCurrency(row.principal)}
       </p>
       <p className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-        <span className="size-2 rounded-sm" style={{ background: INTEREST }} aria-hidden />
+        <span
+          className="size-2 rounded-sm"
+          style={{ background: INTEREST }}
+          aria-hidden
+        />
         Interest {formatCurrency(row.interest)}
       </p>
-      <p className="mt-1 text-slate-500 dark:text-slate-400">Balance left {formatCurrency(row.balance)}</p>
+      <p className="mt-1 text-slate-500 dark:text-slate-400">
+        Balance left {formatCurrency(row.balance)}
+      </p>
     </div>
   );
 }
 
 /** Each year's loan payments split into principal and interest. */
-export default function AmortizationChart({ schedule }: { schedule: YearRow[] }) {
+export default function AmortizationChart({
+  schedule,
+}: {
+  schedule: YearRow[];
+}) {
   return (
     <ResponsiveContainer width="100%" height={240}>
-      <BarChart data={schedule} margin={{ top: 8, right: 4, bottom: 0, left: 0 }} barCategoryGap={1}>
+      <BarChart
+        data={schedule}
+        margin={{ top: 8, right: 4, bottom: 0, left: 0 }}
+        barCategoryGap={1}
+      >
         <CartesianGrid vertical={false} stroke="var(--grid)" />
         <XAxis
           dataKey="year"
@@ -58,8 +92,19 @@ export default function AmortizationChart({ schedule }: { schedule: YearRow[] })
           width={44}
           tick={{ fill: "var(--axis-text)", fontSize: 11 }}
         />
-        <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--cursor)" }} />
-        <Bar dataKey="principal" stackId="y" fill={PRINCIPAL} maxBarSize={24} stroke="var(--surface)" strokeWidth={1} isAnimationActive={false} />
+        <Tooltip
+          content={<ChartTooltip />}
+          cursor={{ fill: "var(--cursor)" }}
+        />
+        <Bar
+          dataKey="principal"
+          stackId="y"
+          fill={PRINCIPAL}
+          maxBarSize={24}
+          stroke="var(--surface)"
+          strokeWidth={1}
+          isAnimationActive={false}
+        />
         <Bar
           dataKey="interest"
           stackId="y"

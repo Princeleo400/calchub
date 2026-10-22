@@ -15,21 +15,35 @@ interface DebtListProps {
 /** Editable list of debts: name, balance, APR and minimum payment for each. */
 export function DebtList({ debts, onChange }: DebtListProps) {
   function patch(index: number, changes: Partial<Debt>) {
-    onChange(debts.map((d, i) => (i === index ? { ...d, ...changes } : d)));
+    onChange(
+      debts.map((debt, position) =>
+        position === index ? { ...debt, ...changes } : debt,
+      ),
+    );
   }
 
   function remove(index: number) {
-    onChange(debts.filter((_, i) => i !== index));
+    onChange(debts.filter((_debt, position) => position !== index));
   }
 
   function add() {
     if (debts.length >= MAX_DEBTS) return;
-    onChange([...debts, { name: `Debt ${debts.length + 1}`, balance: 1_000, rate: 15, minPayment: 30 }]);
+    onChange([
+      ...debts,
+      {
+        name: `Debt ${debts.length + 1}`,
+        balance: 1_000,
+        rate: 15,
+        minPayment: 30,
+      },
+    ]);
   }
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Your debts</p>
+      <p className="text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
+        Your debts
+      </p>
       <ul className="space-y-3">
         {debts.map((debt, index) => (
           <DebtRow
@@ -52,7 +66,9 @@ export function DebtList({ debts, onChange }: DebtListProps) {
           Add a debt
         </button>
       ) : (
-        <p className="text-xs text-slate-500 dark:text-slate-400">You can add up to {MAX_DEBTS} debts.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          You can add up to {MAX_DEBTS} debts.
+        </p>
       )}
     </div>
   );
@@ -84,8 +100,8 @@ function DebtRow({ index, debt, canRemove, onPatch, onRemove }: DebtRowProps) {
           value={debt.name}
           maxLength={40}
           placeholder={`Debt ${index + 1}`}
-          onChange={(e) => onPatch({ name: e.target.value })}
-          className="h-9 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium text-slate-900 outline-none transition-colors duration-150 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:text-slate-50 dark:hover:border-slate-700"
+          onChange={(event) => onPatch({ name: event.target.value })}
+          className="h-9 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium text-slate-900 transition-colors duration-150 outline-none placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:text-slate-50 dark:hover:border-slate-700"
         />
         {canRemove && (
           <button
@@ -133,8 +149,10 @@ function DebtRow({ index, debt, canRemove, onPatch, onRemove }: DebtRowProps) {
         <p className="mt-2 flex gap-1.5 text-xs text-amber-700 dark:text-amber-400">
           <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden />
           <span>
-            <strong className="font-semibold">Warning:</strong> this minimum doesn&apos;t cover the monthly
-            interest (about ${Math.ceil(interest)}), so on its own this balance would never shrink.
+            <strong className="font-semibold">Warning:</strong> this minimum
+            doesn&apos;t cover the monthly interest (about $
+            {Math.ceil(interest)}), so on its own this balance would never
+            shrink.
           </span>
         </p>
       )}

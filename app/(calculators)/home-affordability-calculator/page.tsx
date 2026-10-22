@@ -18,7 +18,7 @@ export const metadata = buildMetadata({
   path: "/home-affordability-calculator",
 });
 
-const ex = affordFor(75_000);
+const exampleResult = affordFor(75_000);
 const exDebt = affordFor(75_000, { monthlyDebts: 500 });
 
 const faqs: FaqItem[] = [
@@ -98,11 +98,12 @@ export default function HomeAffordabilityPage() {
           <h2>A worked example</h2>
           <p>
             On {formatCurrency(75_000)} a year with no other debts, 20% down and
-            a 7% rate, the 28% limit allows {formatCurrency(ex.housingBudget)} a
-            month, which supports a home of about{" "}
-            {formatCurrency(roundPrice(ex.maxHomePrice))}. Add a $500 car
-            payment and the 36% total limit takes over, cutting the budget to{" "}
-            {formatCurrency(exDebt.housingBudget)} and the price to about{" "}
+            a 7% rate, the 28% limit allows{" "}
+            {formatCurrency(exampleResult.housingBudget)} a month, which
+            supports a home of about{" "}
+            {formatCurrency(roundPrice(exampleResult.maxHomePrice))}. Add a $500
+            car payment and the 36% total limit takes over, cutting the budget
+            to {formatCurrency(exDebt.housingBudget)} and the price to about{" "}
             {formatCurrency(roundPrice(exDebt.maxHomePrice))}.
           </p>
 
@@ -127,12 +128,15 @@ export default function HomeAffordabilityPage() {
           <h2>By salary</h2>
           <p>Quick answers at 20% down and a 7% rate, with no other debts:</p>
           <ul>
-            {SALARIES.map((s) => (
-              <li key={s}>
-                <Link href={`/how-much-house-can-i-afford/${salarySlug(s)}`}>
-                  How much house can I afford on {formatCurrency(s)}?
+            {SALARIES.map((salary) => (
+              <li key={salary}>
+                <Link
+                  href={`/how-much-house-can-i-afford/${salarySlug(salary)}`}
+                >
+                  How much house can I afford on {formatCurrency(salary)}?
                 </Link>{" "}
-                About {formatCurrency(roundPrice(affordFor(s).maxHomePrice))}
+                About{" "}
+                {formatCurrency(roundPrice(affordFor(salary).maxHomePrice))}
               </li>
             ))}
           </ul>

@@ -37,7 +37,10 @@ export function useShareableUrl<T extends CalculatorInputs>(defaults: T) {
     const id = window.setTimeout(() => {
       const query = toQuery(values, defaultsRef.current);
       const url = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
-      if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      if (
+        url !==
+        `${window.location.pathname}${window.location.search}${window.location.hash}`
+      ) {
         window.history.replaceState(window.history.state, "", url);
       }
     }, 300);
@@ -49,7 +52,10 @@ export function useShareableUrl<T extends CalculatorInputs>(defaults: T) {
   }, []);
 
   const replace = useCallback((next: Partial<T>) => {
-    setValues({ ...defaultsRef.current, ...pickKnown(next, defaultsRef.current) });
+    setValues({
+      ...defaultsRef.current,
+      ...pickKnown(next, defaultsRef.current),
+    });
   }, []);
 
   const reset = useCallback(() => setValues(defaultsRef.current), []);
@@ -68,8 +74,8 @@ export function useShareableUrl<T extends CalculatorInputs>(defaults: T) {
 
 function coerce(raw: string, fallback: InputValue): InputValue | undefined {
   if (typeof fallback === "number") {
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : undefined;
+    const numeric = Number(raw);
+    return Number.isFinite(numeric) ? numeric : undefined;
   }
   if (typeof fallback === "boolean") {
     if (raw === "1" || raw === "true") return true;
@@ -80,7 +86,10 @@ function coerce(raw: string, fallback: InputValue): InputValue | undefined {
   return raw.slice(0, 2000);
 }
 
-function parseParams<T extends CalculatorInputs>(search: string, defaults: T): T | null {
+function parseParams<T extends CalculatorInputs>(
+  search: string,
+  defaults: T,
+): T | null {
   const params = new URLSearchParams(search);
   let changed = false;
   const result: CalculatorInputs = { ...defaults };
@@ -100,16 +109,23 @@ function toQuery(values: CalculatorInputs, defaults: CalculatorInputs): string {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(values)) {
     if (value === defaults[key]) continue;
-    params.set(key, typeof value === "boolean" ? (value ? "1" : "0") : String(value));
+    params.set(
+      key,
+      typeof value === "boolean" ? (value ? "1" : "0") : String(value),
+    );
   }
   return params.toString();
 }
 
-function pickKnown<T extends CalculatorInputs>(input: Partial<T>, defaults: T): Partial<T> {
+function pickKnown<T extends CalculatorInputs>(
+  input: Partial<T>,
+  defaults: T,
+): Partial<T> {
   const out: Partial<T> = {};
   for (const key of Object.keys(defaults) as Array<keyof T>) {
     const value = input[key];
-    if (value !== undefined && typeof value === typeof defaults[key]) out[key] = value;
+    if (value !== undefined && typeof value === typeof defaults[key])
+      out[key] = value;
   }
   return out;
 }

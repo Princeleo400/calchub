@@ -18,7 +18,7 @@ import { useShareableUrl } from "@/lib/hooks/useShareableUrl";
 import { stampDutyInsight } from "@/lib/insights/stampDuty";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
-const DEFAULTS = { price: 350_000, buyer: "mover", nr: false };
+const DEFAULTS = { price: 350_000, buyer: "mover", nonResident: false };
 
 const BUYERS = [
   { value: "mover", label: "Moving home (or buying your only home)" },
@@ -35,7 +35,8 @@ const BUYER_LABEL: Record<BuyerType, string> = {
   additional: "additional property",
 };
 
-const gbp = (n: number, decimals = 0) => formatCurrency(n, "GBP", decimals);
+const gbp = (amount: number, decimals = 0) =>
+  formatCurrency(amount, "GBP", decimals);
 
 function bandLabel(from: number, to: number): string {
   if (from === 0) return `Up to ${gbp(to)}`;
@@ -48,7 +49,7 @@ export function StampDutyCalculator() {
     values.buyer === "firstTime" || values.buyer === "additional"
       ? values.buyer
       : "mover";
-  const input = { price: values.price, buyer, nonResident: values.nr };
+  const input = { price: values.price, buyer, nonResident: values.nonResident };
   const result = calculateStampDuty(input);
   const insight = stampDutyInsight(input, result);
 
@@ -57,14 +58,14 @@ export function StampDutyCalculator() {
     inputs: values,
     defaults: DEFAULTS,
     result: gbp(result.tax),
-    summary: `${gbp(values.price)}, ${BUYER_LABEL[buyer]}${values.nr ? ", non-UK resident" : ""}`,
+    summary: `${gbp(values.price)}, ${BUYER_LABEL[buyer]}${values.nonResident ? ", non-UK resident" : ""}`,
     enabled: values.price > 0,
   });
 
   const formula = [
     ...result.slices.map(
-      (s) =>
-        `${bandLabel(s.from, s.to).padEnd(30)} ${gbp(s.taxable).padStart(11)} × ${String(s.rate).padStart(2)}% = ${gbp(s.tax, 2)}`,
+      (slice) =>
+        `${bandLabel(slice.from, slice.to).padEnd(30)} ${gbp(slice.taxable).padStart(11)} × ${String(slice.rate).padStart(2)}% = ${gbp(slice.tax, 2)}`,
     ),
     "",
     `Total = ${gbp(result.tax)} (rounded down to the pound)`,
@@ -98,8 +99,8 @@ export function StampDutyCalculator() {
           )}
           <CheckboxField
             label="A buyer is not resident in the UK"
-            checked={values.nr}
-            onChange={(nr) => update({ nr })}
+            checked={values.nonResident}
+            onChange={(nonResident) => update({ nonResident })}
             hint="Adds a 2% surcharge. Residence is based on days spent in the UK."
           />
           <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
@@ -120,11 +121,11 @@ export function StampDutyCalculator() {
             }
             actions={<ShareButton calculator="stamp-duty-calculator" />}
           >
-            {result.slices.map((s) => (
+            {result.slices.map((slice) => (
               <ResultRow
-                key={s.from}
-                label={`${bandLabel(s.from, s.to)} at ${s.rate}%`}
-                value={gbp(s.tax)}
+                key={slice.from}
+                label={`${bandLabel(slice.from, slice.to)} at ${slice.rate}%`}
+                value={gbp(slice.tax)}
               />
             ))}
             <ResultRow label="Total" value={gbp(result.tax)} emphasis />

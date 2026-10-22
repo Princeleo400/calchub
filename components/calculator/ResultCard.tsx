@@ -24,20 +24,40 @@ interface ResultCardProps {
   actions?: ReactNode;
 }
 
-export function ResultCard({ label, value, caption, tone = "neutral", children, actions }: ResultCardProps) {
+export function ResultCard({
+  label,
+  value,
+  caption,
+  tone = "neutral",
+  children,
+  actions,
+}: ResultCardProps) {
   return (
     <section
       aria-label="Result"
       className="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900"
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
+        <p className="text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
+          {label}
+        </p>
         {actions}
       </div>
       {/* aria-live announces new results to screen readers as inputs change. */}
       <div aria-live="polite" aria-atomic="true">
-        <p className={cn("mt-2 text-4xl font-bold tracking-tight tabular-nums", toneClasses[tone])}>{value}</p>
-        {caption && <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{caption}</p>}
+        <p
+          className={cn(
+            "mt-2 text-4xl font-bold tracking-tight tabular-nums",
+            toneClasses[tone],
+          )}
+        >
+          {value}
+        </p>
+        {caption && (
+          <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+            {caption}
+          </p>
+        )}
       </div>
       {children && (
         <dl className="mt-5 divide-y divide-slate-100 border-t border-slate-200 dark:divide-slate-800 dark:border-slate-700">
@@ -61,13 +81,21 @@ export function ResultRow({ label, value, emphasis, swatch }: ResultRowProps) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-2.5">
       <dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-        {swatch && <span aria-hidden className="size-2.5 shrink-0 rounded-sm" style={{ backgroundColor: swatch }} />}
+        {swatch && (
+          <span
+            aria-hidden
+            className="size-2.5 shrink-0 rounded-sm"
+            style={{ backgroundColor: swatch }}
+          />
+        )}
         {label}
       </dt>
       <dd
         className={cn(
           "text-right text-sm tabular-nums",
-          emphasis ? "font-semibold text-slate-900 dark:text-slate-50" : "text-slate-900 dark:text-slate-100",
+          emphasis
+            ? "font-semibold text-slate-900 dark:text-slate-50"
+            : "text-slate-900 dark:text-slate-100",
         )}
       >
         {value}

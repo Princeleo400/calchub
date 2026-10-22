@@ -36,7 +36,8 @@ const AMORTIZATIONS = [
   { value: "30", label: "30 years" },
 ] as const;
 
-const cad = (n: number, decimals = 0) => formatCurrency(n, "CAD", decimals);
+const cad = (amount: number, decimals = 0) =>
+  formatCurrency(amount, "CAD", decimals);
 
 export function StressTestCalculator() {
   const { values, update, replace } = useShareableUrl(DEFAULTS);
@@ -51,10 +52,14 @@ export function StressTestCalculator() {
     condoFeesPerMonth: values.condo,
     otherDebtsPerMonth: values.debts,
   };
-  const r = calculateStressTest(inputs);
-  const insight = stressTestInsight(inputs, r);
+  const result = calculateStressTest(inputs);
+  const insight = stressTestInsight(inputs, result);
   const downPct = values.price > 0 ? (values.down / values.price) * 100 : 0;
-  const status = r.problem ? "Check down payment" : r.passes ? "Pass" : "Fail";
+  const status = result.problem
+    ? "Check down payment"
+    : result.passes
+      ? "Pass"
+      : "Fail";
 
   useRecordCalculation({
     calculator: "mortgage-stress-test-calculator",
@@ -68,14 +73,14 @@ export function StressTestCalculator() {
   const housing =
     values.tax / 12 + values.heat + values.condo * CANADA_RULES.condoFeeShare;
   const formula = [
-    `Qualifying rate = max(${values.rate}% + ${CANADA_RULES.qualifyingBuffer}%, ${CANADA_RULES.qualifyingFloor}%) = ${formatPercent(r.qualifyingRate, 2)}`,
-    `Monthly rate    = (1 + ${formatPercent(r.qualifyingRate, 2)} ÷ 2)^(1/6) − 1   (compounded semi-annually)`,
-    `Payment         = ${cad(r.paymentAtQualifying, 2)} on a ${cad(r.mortgage)} mortgage over ${values.amort} years`,
+    `Qualifying rate = max(${values.rate}% + ${CANADA_RULES.qualifyingBuffer}%, ${CANADA_RULES.qualifyingFloor}%) = ${formatPercent(result.qualifyingRate, 2)}`,
+    `Monthly rate    = (1 + ${formatPercent(result.qualifyingRate, 2)} ÷ 2)^(1/6) − 1   (compounded semi-annually)`,
+    `Payment         = ${cad(result.paymentAtQualifying, 2)} on a ${cad(result.mortgage)} mortgage over ${values.amort} years`,
     "",
     `Housing costs   = payment + tax ${cad(values.tax / 12, 2)} + heat ${cad(values.heat, 2)}${values.condo > 0 ? ` + 50% of condo fees ${cad(values.condo / 2, 2)}` : ""}`,
-    `                = ${cad(r.paymentAtQualifying + housing, 2)} a month`,
-    `GDS = housing ÷ monthly income = ${formatPercent(r.gds, 2)}   (max ${CANADA_RULES.maxGds}%)`,
-    `TDS = (housing + other debts) ÷ monthly income = ${formatPercent(r.tds, 2)}   (max ${CANADA_RULES.maxTds}%)`,
+    `                = ${cad(result.paymentAtQualifying + housing, 2)} a month`,
+    `GDS = housing ÷ monthly income = ${formatPercent(result.gds, 2)}   (max ${CANADA_RULES.maxGds}%)`,
+    `TDS = (housing + other debts) ÷ monthly income = ${formatPercent(result.tds, 2)}   (max ${CANADA_RULES.maxTds}%)`,
   ];
 
   return (
@@ -101,7 +106,7 @@ export function StressTestCalculator() {
             max={50_000_000}
             value={values.down}
             onChange={(down) => update({ down })}
-            hint={`${formatPercent(downPct, 1)} of the price. Minimum ${cad(r.minDown)}.`}
+            hint={`${formatPercent(downPct, 1)} of the price. Minimum ${cad(result.minDown)}.`}
           />
           <div className="grid grid-cols-2 gap-4">
             <NumberField
@@ -198,11 +203,13 @@ export function StressTestCalculator() {
           <ResultCard
             label="Stress test"
             value={status}
-            tone={r.problem ? "warning" : r.passes ? "success" : "danger"}
+            tone={
+              result.problem ? "warning" : result.passes ? "success" : "danger"
+            }
             caption={
               <span className="flex items-center gap-1.5">
-                {!r.problem &&
-                  (r.passes ? (
+                {!result.problem &&
+                  (result.passes ? (
                     <CheckCircle2
                       className="size-4 text-green-600 dark:text-green-400"
                       aria-hidden
@@ -213,7 +220,7 @@ export function StressTestCalculator() {
                       aria-hidden
                     />
                   ))}
-                Qualifying at {formatPercent(r.qualifyingRate, 2)}
+                Qualifying at {formatPercent(result.qualifyingRate, 2)}
               </span>
             }
             actions={
@@ -222,39 +229,41 @@ export function StressTestCalculator() {
           >
             <ResultRow
               label="Payment at your rate"
-              value={cad(r.paymentAtContract)}
+              value={cad(result.paymentAtContract)}
             />
             <ResultRow
               label="Payment at qualifying rate"
-              value={cad(r.paymentAtQualifying)}
+              value={cad(result.paymentAtQualifying)}
             />
             <ResultRow
               label={`GDS (max ${CANADA_RULES.maxGds}%)`}
-              value={formatPercent(r.gds, 1)}
+              value={formatPercent(result.gds, 1)}
               emphasis
             />
             <ResultRow
               label={`TDS (max ${CANADA_RULES.maxTds}%)`}
-              value={formatPercent(r.tds, 1)}
+              value={formatPercent(result.tds, 1)}
               emphasis
             />
-            {r.insured && (
+            {result.insured && (
               <ResultRow
-                label={`CMHC premium (${formatPercent(r.premiumRatePct, 2)})`}
-                value={cad(r.premium)}
+                label={`CMHC premium (${formatPercent(result.premiumRatePct, 2)})`}
+                value={cad(result.premium)}
               />
             )}
-            <ResultRow label="Mortgage amount" value={cad(r.mortgage)} />
+            <ResultRow label="Mortgage amount" value={cad(result.mortgage)} />
           </ResultCard>
           <section
             aria-label="Maximum you qualify for"
             className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900"
           >
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <p className="text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
               Most you qualify for with {cad(values.down)} down
             </p>
-            <p className="mt-1.5 text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-50">
-              {r.maxPrice > 0 ? cad(Math.floor(r.maxPrice / 1000) * 1000) : "–"}
+            <p className="mt-1.5 text-2xl font-semibold text-slate-900 tabular-nums dark:text-slate-50">
+              {result.maxPrice > 0
+                ? cad(Math.floor(result.maxPrice / 1000) * 1000)
+                : "–"}
             </p>
             <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               Home price, allowing for CMHC premiums and minimum down payment

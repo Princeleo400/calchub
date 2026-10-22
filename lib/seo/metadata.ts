@@ -11,7 +11,12 @@ interface BuildMetadataOptions {
   noIndex?: boolean;
 }
 
-export function buildMetadata({ title, description, path, noIndex }: BuildMetadataOptions): Metadata {
+export function buildMetadata({
+  title,
+  description,
+  path,
+  noIndex,
+}: BuildMetadataOptions): Metadata {
   const url = `${site.url}${path}`;
   return {
     title,

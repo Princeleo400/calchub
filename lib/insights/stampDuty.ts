@@ -6,12 +6,12 @@ import {
 } from "@/lib/calculators/stampDuty";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
-const gbp = (n: number) => formatCurrency(n, "GBP");
+const gbp = (amount: number) => formatCurrency(amount, "GBP");
 
 /** Plain-English explanation of a stamp duty result. */
 export function stampDutyInsight(
   input: StampDutyInputs,
-  r: StampDutyResult,
+  result: StampDutyResult,
 ): string[] {
   if (input.price <= 0)
     return [
@@ -19,18 +19,18 @@ export function stampDutyInsight(
     ];
 
   const lines: string[] = [
-    r.tax === 0
+    result.tax === 0
       ? `There is no Stamp Duty to pay on a ${gbp(input.price)} purchase.`
-      : `Stamp Duty on a ${gbp(input.price)} purchase is ${gbp(r.tax)}, an effective rate of ${formatPercent(r.effectiveRate, 2)} of the price.`,
+      : `Stamp Duty on a ${gbp(input.price)} purchase is ${gbp(result.tax)}, an effective rate of ${formatPercent(result.effectiveRate, 2)} of the price.`,
   ];
 
   const standard = calculateStampDuty({ ...input, buyer: "mover" }).tax;
 
-  if (r.firstTimeReliefApplied && standard > r.tax) {
+  if (result.firstTimeReliefApplied && standard > result.tax) {
     lines.push(
-      `First-time buyer relief saves you ${gbp(standard - r.tax)} compared with someone who already owns a home.`,
+      `First-time buyer relief saves you ${gbp(standard - result.tax)} compared with someone who already owns a home.`,
     );
-  } else if (r.overFirstTimeCap) {
+  } else if (result.overFirstTimeCap) {
     const atCap = calculateStampDuty({
       ...input,
       price: SDLT_RATES.firstTimeBuyerMaxPrice,
@@ -43,7 +43,7 @@ export function stampDutyInsight(
     input.price <= SDLT_RATES.firstTimeBuyerMaxPrice
   ) {
     const ftb = calculateStampDuty({ ...input, buyer: "firstTime" }).tax;
-    if (ftb < r.tax)
+    if (ftb < result.tax)
       lines.push(
         `If every buyer were a first-time buyer, the bill would be ${gbp(ftb)} instead.`,
       );
@@ -56,14 +56,14 @@ export function stampDutyInsight(
       buyer: "mover",
     }).tax;
     lines.push(
-      `The ${SDLT_RATES.additionalSurcharge}% surcharge for additional properties, such as second homes and buy-to-lets, adds ${gbp(r.tax - withoutSurcharge)}.`,
+      `The ${SDLT_RATES.additionalSurcharge}% surcharge for additional properties, such as second homes and buy-to-lets, adds ${gbp(result.tax - withoutSurcharge)}.`,
     );
   }
 
   if (input.nonResident && input.price >= SDLT_RATES.surchargeMinPrice) {
     const resident = calculateStampDuty({ ...input, nonResident: false }).tax;
     lines.push(
-      `The ${SDLT_RATES.nonResidentSurcharge}% surcharge for non-UK residents adds ${gbp(r.tax - resident)}.`,
+      `The ${SDLT_RATES.nonResidentSurcharge}% surcharge for non-UK residents adds ${gbp(result.tax - resident)}.`,
     );
   }
 

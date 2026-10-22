@@ -4,7 +4,13 @@ import { getCalculator } from "@/lib/calculators/registry";
 import type { CalculatorSlug } from "@/lib/types";
 
 /** Inline call-to-action that sends readers from an article to a calculator. */
-export function CalculatorCta({ slug, text }: { slug: CalculatorSlug; text?: string }) {
+export function CalculatorCta({
+  slug,
+  text,
+}: {
+  slug: CalculatorSlug;
+  text?: string;
+}) {
   const calc = getCalculator(slug);
   const Icon = calc.icon;
   return (
@@ -16,8 +22,12 @@ export function CalculatorCta({ slug, text }: { slug: CalculatorSlug; text?: str
         <Icon className="size-4" aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold text-slate-900 dark:text-slate-50">{calc.name}</span>
-        <span className="block text-sm text-slate-600 dark:text-slate-300">{text ?? calc.description}</span>
+        <span className="block text-sm font-semibold text-slate-900 dark:text-slate-50">
+          {calc.name}
+        </span>
+        <span className="block text-sm text-slate-600 dark:text-slate-300">
+          {text ?? calc.description}
+        </span>
       </span>
       <ArrowRight
         className="size-4 shrink-0 text-blue-600 transition-transform duration-150 group-hover:translate-x-0.5 dark:text-blue-400"

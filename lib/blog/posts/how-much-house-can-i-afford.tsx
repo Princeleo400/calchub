@@ -1,6 +1,9 @@
 import { CalculatorCta } from "@/components/blog/CalculatorCta";
 import { DataTable } from "@/components/blog/DataTable";
-import { calculateAffordability, type AffordabilityInputs } from "@/lib/calculators/affordability";
+import {
+  calculateAffordability,
+  type AffordabilityInputs,
+} from "@/lib/calculators/affordability";
 import type { Post } from "@/lib/blog/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -24,7 +27,7 @@ const byIncome = incomes.map((annualIncome) => ({
   clear: calculateAffordability({ ...base, annualIncome }),
   withCar: calculateAffordability({ ...base, annualIncome, monthlyDebts: 600 }),
 }));
-const ex = calculateAffordability(base);
+const exampleResult = calculateAffordability(base);
 const exDebt = calculateAffordability({ ...base, monthlyDebts: 600 });
 const exRate6 = calculateAffordability({ ...base, rate: 6 });
 const exRate8 = calculateAffordability({ ...base, rate: 8 });
@@ -34,47 +37,64 @@ function Body() {
   return (
     <>
       <p>
-        Lenders don&apos;t decide what you can afford by looking at house prices. They look at your monthly income
-        and how much of it would go to debt. Once you know those limits, you can work backward from a monthly
+        Lenders don&apos;t decide what you can afford by looking at house
+        prices. They look at your monthly income and how much of it would go to
+        debt. Once you know those limits, you can work backward from a monthly
         payment to a price range.
       </p>
 
       <h2>The short answer</h2>
       <p>
-        With no other debts, a 20% down payment and a 7% rate, a {formatCurrency(base.annualIncome)} salary
-        supports a home of about <strong>{formatCurrency(ex.maxHomePrice)}</strong>. That keeps the full monthly
-        payment, including property tax and insurance, near {formatCurrency(ex.monthlyPayment)}, or 28% of gross
+        With no other debts, a 20% down payment and a 7% rate, a{" "}
+        {formatCurrency(base.annualIncome)} salary supports a home of about{" "}
+        <strong>{formatCurrency(exampleResult.maxHomePrice)}</strong>. That
+        keeps the full monthly payment, including property tax and insurance,
+        near {formatCurrency(exampleResult.monthlyPayment)}, or 28% of gross
         monthly income.
       </p>
 
       <h2>The rules lenders use</h2>
       <p>
-        Your <strong>debt-to-income ratio (DTI)</strong> is your total monthly debt payments, including the new
-        mortgage, divided by your gross monthly income. A traditional guideline, often called the 28/36 rule,
-        says:
+        Your <strong>debt-to-income ratio (DTI)</strong> is your total monthly
+        debt payments, including the new mortgage, divided by your gross monthly
+        income. A traditional guideline, often called the 28/36 rule, says:
       </p>
       <ul>
-        <li>Housing costs should be no more than 28% of gross monthly income.</li>
-        <li>All debts together, housing included, should be no more than 36%.</li>
+        <li>
+          Housing costs should be no more than 28% of gross monthly income.
+        </li>
+        <li>
+          All debts together, housing included, should be no more than 36%.
+        </li>
       </ul>
       <p>
-        These are guidelines, not hard limits. Fannie Mae&apos;s rules cap total DTI at 36% for manually
-        underwritten loans, rising to 45% for borrowers with strong credit and savings, and allow up to 50% for
-        loans approved through its automated system. A 2026 St. Louis Fed study of more than 30 million mortgage
-        applications found that denial rates stayed fairly flat up to a DTI of about 50%, then rose sharply.
+        These are guidelines, not hard limits. Fannie Mae&apos;s rules cap total
+        DTI at 36% for manually underwritten loans, rising to 45% for borrowers
+        with strong credit and savings, and allow up to 50% for loans approved
+        through its automated system. A 2026 St. Louis Fed study of more than 30
+        million mortgage applications found that denial rates stayed fairly flat
+        up to a DTI of about 50%, then rose sharply.
       </p>
       <p>
-        In other words, a lender may approve you for more than the 28/36 rule suggests. Whether you
-        <em> should</em> borrow that much is a different question, covered below.
+        In other words, a lender may approve you for more than the 28/36 rule
+        suggests. Whether you
+        <em> should</em> borrow that much is a different question, covered
+        below.
       </p>
 
       <h2>What you can afford by income</h2>
       <p>
-        This table applies the 28/36 rule with a 20% down payment, a 30-year loan at 7%, property tax of 1.1% a
-        year and $1,800 a year for insurance. The last column assumes a $600 monthly car or student loan payment.
+        This table applies the 28/36 rule with a 20% down payment, a 30-year
+        loan at 7%, property tax of 1.1% a year and $1,800 a year for insurance.
+        The last column assumes a $600 monthly car or student loan payment.
       </p>
       <DataTable
-        headers={["Income", "Monthly budget", "Home price, no debts", "With $600/mo debts"]}
+        headers={[
+          "Income",
+          "Monthly budget",
+          "Home price, no debts",
+          "With $600/mo debts",
+        ]}
         numeric={[1, 2, 3]}
         rows={byIncome.map(({ annualIncome, clear, withCar }) => [
           formatCurrency(annualIncome),
@@ -84,53 +104,70 @@ function Body() {
         ])}
       />
       <p>
-        Notice that the $600 debt barely matters at higher incomes. The 28% housing limit is the tighter one
-        there. At {formatCurrency(base.annualIncome)}, the same debt payment pushes the total over 36%, cutting
-        the budget to {formatCurrency(exDebt.housingBudget)} a month and the price to{" "}
+        Notice that the $600 debt barely matters at higher incomes. The 28%
+        housing limit is the tighter one there. At{" "}
+        {formatCurrency(base.annualIncome)}, the same debt payment pushes the
+        total over 36%, cutting the budget to{" "}
+        {formatCurrency(exDebt.housingBudget)} a month and the price to{" "}
         {formatCurrency(exDebt.maxHomePrice)}.
       </p>
 
-      <CalculatorCta slug="mortgage-calculator" text="Check the payment on a specific home price." />
+      <CalculatorCta
+        slug="mortgage-calculator"
+        text="Check the payment on a specific home price."
+      />
 
       <h2>What changes the answer</h2>
       <h3>Your interest rate</h3>
       <p>
-        On a {formatCurrency(base.annualIncome)} salary, a 6% rate stretches the budget to about{" "}
-        {formatCurrency(exRate6.maxHomePrice)}, while 8% shrinks it to {formatCurrency(exRate8.maxHomePrice)}.
-        That swing of {formatCurrency(exRate6.maxHomePrice - exRate8.maxHomePrice)} comes from the rate alone,
-        which is why shopping several lenders matters.
+        On a {formatCurrency(base.annualIncome)} salary, a 6% rate stretches the
+        budget to about {formatCurrency(exRate6.maxHomePrice)}, while 8% shrinks
+        it to {formatCurrency(exRate8.maxHomePrice)}. That swing of{" "}
+        {formatCurrency(exRate6.maxHomePrice - exRate8.maxHomePrice)} comes from
+        the rate alone, which is why shopping several lenders matters.
       </p>
       <h3>Your down payment</h3>
       <p>
-        Putting 10% down instead of 20% lowers the price you can afford at the same income to about{" "}
-        {formatCurrency(ex10Down.maxHomePrice)}, because more of the payment goes to a bigger loan and to private
-        mortgage insurance (PMI). The upside is needing far less cash upfront:{" "}
-        {formatCurrency(ex10Down.downPayment)} instead of {formatCurrency(ex.downPayment)}.
+        Putting 10% down instead of 20% lowers the price you can afford at the
+        same income to about {formatCurrency(ex10Down.maxHomePrice)}, because
+        more of the payment goes to a bigger loan and to private mortgage
+        insurance (PMI). The upside is needing far less cash upfront:{" "}
+        {formatCurrency(ex10Down.downPayment)} instead of{" "}
+        {formatCurrency(exampleResult.downPayment)}.
       </p>
       <h3>Taxes, insurance and HOA dues</h3>
       <p>
-        Property tax and insurance vary a lot from place to place, and HOA dues come straight out of the same
-        monthly budget. Look up the real figures for the area you&apos;re considering; they can change the answer by
-        tens of thousands of dollars.
+        Property tax and insurance vary a lot from place to place, and HOA dues
+        come straight out of the same monthly budget. Look up the real figures
+        for the area you&apos;re considering; they can change the answer by tens
+        of thousands of dollars.
       </p>
 
       <h2>Approved for vs comfortable with</h2>
       <p>
-        A lender&apos;s maximum is the most it will lend, not a recommendation. The ratios ignore costs that
-        don&apos;t show up on a credit report, such as childcare, saving for retirement and home repairs. Before
-        you commit, check that:
+        A lender&apos;s maximum is the most it will lend, not a recommendation.
+        The ratios ignore costs that don&apos;t show up on a credit report, such
+        as childcare, saving for retirement and home repairs. Before you commit,
+        check that:
       </p>
       <ul>
         <li>the full payment still leaves room to save every month;</li>
-        <li>you&apos;ll have an emergency fund left after the down payment and closing costs;</li>
+        <li>
+          you&apos;ll have an emergency fund left after the down payment and
+          closing costs;
+        </li>
         <li>you could keep paying if your income dipped for a few months.</li>
       </ul>
       <p>
-        A good test is to &ldquo;live on&rdquo; the new payment for a few months before buying: set aside the
-        difference between your rent and the expected mortgage payment and see how it feels.
+        A good test is to &ldquo;live on&rdquo; the new payment for a few months
+        before buying: set aside the difference between your rent and the
+        expected mortgage payment and see how it feels.
       </p>
 
-      <CalculatorCta slug="debt-payoff-calculator" text="Paying down other debts first raises what you can afford." />
+      <CalculatorCta
+        slug="debt-payoff-calculator"
+        text="Paying down other debts first raises what you can afford."
+      />
     </>
   );
 }
@@ -148,7 +185,7 @@ export const post: Post = {
   faqs: [
     {
       question: "How much house can I afford on $70,000 a year?",
-      answer: `With no other debts, 20% down and a 7% rate, about ${formatCurrency(ex.maxHomePrice)}, using the common guideline of spending no more than 28% of gross income on housing. Other debts, a smaller down payment or higher taxes lower that figure.`,
+      answer: `With no other debts, 20% down and a 7% rate, about ${formatCurrency(exampleResult.maxHomePrice)}, using the common guideline of spending no more than 28% of gross income on housing. Other debts, a smaller down payment or higher taxes lower that figure.`,
     },
     {
       question: "What is the 28/36 rule?",
@@ -167,7 +204,8 @@ export const post: Post = {
       href: "https://selling-guide.fanniemae.com/sel/b3-6-02/debt-income-ratios",
     },
     {
-      label: "Federal Reserve Bank of St. Louis: What 30 million applications reveal about mortgage denial thresholds (2026)",
+      label:
+        "Federal Reserve Bank of St. Louis: What 30 million applications reveal about mortgage denial thresholds (2026)",
       href: "https://www.stlouisfed.org/on-the-economy/2026/jun/what-30-million-applications-reveal-mortgage-denial-thresholds",
     },
   ],

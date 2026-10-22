@@ -32,7 +32,9 @@ export function HistoryPanel({ calculator, onRestore }: HistoryPanelProps) {
         {records.length > 0 &&
           (confirming ? (
             <span className="flex items-center gap-2 text-xs">
-              <span className="text-slate-500 dark:text-slate-400">Clear all?</span>
+              <span className="text-slate-500 dark:text-slate-400">
+                Clear all?
+              </span>
               <button
                 type="button"
                 onClick={() => {
@@ -64,8 +66,8 @@ export function HistoryPanel({ calculator, onRestore }: HistoryPanelProps) {
 
       {records.length === 0 ? (
         <p className="px-4 py-5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-          Change any input and your calculations are saved here automatically, in this browser
-          only. No account needed.
+          Change any input and your calculations are saved here automatically,
+          in this browser only. No account needed.
         </p>
       ) : (
         <ul className="max-h-80 divide-y divide-slate-100 overflow-y-auto dark:divide-slate-800">
@@ -76,7 +78,7 @@ export function HistoryPanel({ calculator, onRestore }: HistoryPanelProps) {
                 onClick={() => onRestore(record)}
                 className="block w-full px-4 py-3 pr-10 text-left transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/60"
               >
-                <span className="block text-sm font-semibold tabular-nums text-slate-900 dark:text-slate-50">
+                <span className="block text-sm font-semibold text-slate-900 tabular-nums dark:text-slate-50">
                   {record.result}
                 </span>
                 <span className="mt-0.5 block truncate text-xs text-slate-500 dark:text-slate-400">
@@ -90,7 +92,7 @@ export function HistoryPanel({ calculator, onRestore }: HistoryPanelProps) {
                 type="button"
                 onClick={() => remove(record.id)}
                 aria-label={`Delete ${record.result} from history`}
-                className="absolute right-2 top-3 flex size-7 items-center justify-center rounded-md text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-700 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                className="absolute top-3 right-2 flex size-7 items-center justify-center rounded-md text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-700 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-200"
               >
                 <X className="size-3.5" aria-hidden />
               </button>

@@ -246,9 +246,9 @@ export default function MethodologyPage() {
       </Formula>
       <p>Daily needs (TDEE) are BMR times an activity factor:</p>
       <ul>
-        {ACTIVITY_LEVELS.map((a) => (
-          <li key={a.id}>
-            {a.label} ({a.description.toLowerCase()}): × {a.factor}
+        {ACTIVITY_LEVELS.map((level) => (
+          <li key={level.id}>
+            {level.label} ({level.description.toLowerCase()}): × {level.factor}
           </li>
         ))}
       </ul>

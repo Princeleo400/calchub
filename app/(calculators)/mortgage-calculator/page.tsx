@@ -1,5 +1,9 @@
 import { CalculatorShell } from "@/components/calculator/CalculatorShell";
-import { calculateMortgage, formatDuration, type MortgageInputs } from "@/lib/calculators/mortgage";
+import {
+  calculateMortgage,
+  formatDuration,
+  type MortgageInputs,
+} from "@/lib/calculators/mortgage";
 import { buildMetadata } from "@/lib/seo/metadata";
 import type { FaqItem } from "@/lib/seo/jsonLd";
 import { formatCurrency } from "@/lib/utils";
@@ -24,7 +28,7 @@ const example: MortgageInputs = {
   pmiPct: 0.5,
   extraPerMonth: 0,
 };
-const ex = calculateMortgage(example);
+const exampleResult = calculateMortgage(example);
 const ex15 = calculateMortgage({ ...example, termYears: 15 });
 const exLowDown = calculateMortgage({ ...example, downPaymentPct: 10 });
 const exExtra = calculateMortgage({ ...example, extraPerMonth: 200 });
@@ -43,7 +47,7 @@ const faqs: FaqItem[] = [
   },
   {
     question: "Is a 15-year or 30-year mortgage better?",
-    answer: `A 15-year loan has a higher monthly payment but costs far less interest. In our example ${formatCurrency(ex.loanAmount)} loan at 7%, the 15-year payment is ${formatCurrency(ex15.monthlyPrincipalInterest)} for principal and interest against ${formatCurrency(ex.monthlyPrincipalInterest)} for 30 years, and total interest falls from ${formatCurrency(ex.totalInterest)} to ${formatCurrency(ex15.totalInterest)}. A 30-year loan gives you more room in your monthly budget.`,
+    answer: `A 15-year loan has a higher monthly payment but costs far less interest. In our example ${formatCurrency(exampleResult.loanAmount)} loan at 7%, the 15-year payment is ${formatCurrency(ex15.monthlyPrincipalInterest)} for principal and interest against ${formatCurrency(exampleResult.monthlyPrincipalInterest)} for 30 years, and total interest falls from ${formatCurrency(exampleResult.totalInterest)} to ${formatCurrency(ex15.totalInterest)}. A 30-year loan gives you more room in your monthly budget.`,
   },
   {
     question: "Do extra payments really make a difference?",
@@ -58,7 +62,8 @@ const faqs: FaqItem[] = [
 
 const sources = [
   {
-    label: "CFPB: When can I remove private mortgage insurance (PMI) from my loan?",
+    label:
+      "CFPB: When can I remove private mortgage insurance (PMI) from my loan?",
     href: "https://www.consumerfinance.gov/ask-cfpb/when-can-i-remove-private-mortgage-insurance-pmi-from-my-loan-en-202/",
   },
   {
@@ -74,8 +79,9 @@ export default function MortgageCalculatorPage() {
       title="Mortgage Calculator"
       intro={
         <p>
-          Estimate your full monthly mortgage payment, including property tax, insurance, PMI and HOA
-          dues. See how much goes to interest each year and how extra payments shorten your loan.
+          Estimate your full monthly mortgage payment, including property tax,
+          insurance, PMI and HOA dues. See how much goes to interest each year
+          and how extra payments shorten your loan.
         </p>
       }
       lastReviewed="2026-10-18"
@@ -85,83 +91,112 @@ export default function MortgageCalculatorPage() {
         <>
           <h2>How your mortgage payment is calculated</h2>
           <p>
-            A fixed-rate mortgage has the same principal and interest payment every month. It is set so
-            the loan reaches zero on the last payment. Early on most of each payment covers interest;
-            later most of it repays the balance. That pattern is called amortization, and the chart above
-            shows it year by year.
+            A fixed-rate mortgage has the same principal and interest payment
+            every month. It is set so the loan reaches zero on the last payment.
+            Early on most of each payment covers interest; later most of it
+            repays the balance. That pattern is called amortization, and the
+            chart above shows it year by year.
           </p>
           <p>
-            On top of principal and interest, most homeowners pay <strong>property tax</strong> and{" "}
-            <strong>homeowners insurance</strong>. Lenders often collect these monthly into an escrow
-            account and pay the bills when they are due. If you put down less than 20%, you will usually
-            also pay <strong>private mortgage insurance (PMI)</strong>. Condos and some neighborhoods add{" "}
-            <strong>HOA dues</strong>.
+            On top of principal and interest, most homeowners pay{" "}
+            <strong>property tax</strong> and{" "}
+            <strong>homeowners insurance</strong>. Lenders often collect these
+            monthly into an escrow account and pay the bills when they are due.
+            If you put down less than 20%, you will usually also pay{" "}
+            <strong>private mortgage insurance (PMI)</strong>. Condos and some
+            neighborhoods add <strong>HOA dues</strong>.
           </p>
 
           <h2>A worked example</h2>
           <p>
-            Say you buy a {formatCurrency(example.homePrice)} home with 20% down (
-            {formatCurrency(ex.downPayment)}), borrowing {formatCurrency(ex.loanAmount)} at 7% for 30 years.
+            Say you buy a {formatCurrency(example.homePrice)} home with 20% down
+            ({formatCurrency(exampleResult.downPayment)}), borrowing{" "}
+            {formatCurrency(exampleResult.loanAmount)} at 7% for 30 years.
           </p>
           <ul>
-            <li>Principal and interest: {formatCurrency(ex.monthlyPrincipalInterest)} a month</li>
-            <li>Property tax at 1.1% a year: {formatCurrency(ex.monthlyTax)} a month</li>
-            <li>Insurance at $1,800 a year: {formatCurrency(ex.monthlyInsurance)} a month</li>
             <li>
-              <strong>Total: {formatCurrency(ex.totalMonthly)} a month</strong>
+              Principal and interest:{" "}
+              {formatCurrency(exampleResult.monthlyPrincipalInterest)} a month
+            </li>
+            <li>
+              Property tax at 1.1% a year:{" "}
+              {formatCurrency(exampleResult.monthlyTax)} a month
+            </li>
+            <li>
+              Insurance at $1,800 a year:{" "}
+              {formatCurrency(exampleResult.monthlyInsurance)} a month
+            </li>
+            <li>
+              <strong>
+                Total: {formatCurrency(exampleResult.totalMonthly)} a month
+              </strong>
             </li>
           </ul>
           <p>
-            Over 30 years you would pay {formatCurrency(ex.totalInterest)} in interest on top of the{" "}
-            {formatCurrency(ex.loanAmount)} you borrowed. Tax and insurance rates vary widely by location,
-            so replace them with figures for the home you are considering.
+            Over 30 years you would pay{" "}
+            {formatCurrency(exampleResult.totalInterest)} in interest on top of
+            the {formatCurrency(exampleResult.loanAmount)} you borrowed. Tax and
+            insurance rates vary widely by location, so replace them with
+            figures for the home you are considering.
           </p>
 
           <h2>What changes your payment the most</h2>
           <h3>Interest rate</h3>
           <p>
-            Small rate changes move the payment a lot. In the example, a 6% rate instead of 7% lowers
-            principal and interest to {formatCurrency(exRateDown.monthlyPrincipalInterest)} and cuts total
-            interest by {formatCurrency(ex.totalInterest - exRateDown.totalInterest)}. Comparing offers from
-            several lenders is one of the most valuable things you can do.
+            Small rate changes move the payment a lot. In the example, a 6% rate
+            instead of 7% lowers principal and interest to{" "}
+            {formatCurrency(exRateDown.monthlyPrincipalInterest)} and cuts total
+            interest by{" "}
+            {formatCurrency(
+              exampleResult.totalInterest - exRateDown.totalInterest,
+            )}
+            . Comparing offers from several lenders is one of the most valuable
+            things you can do.
           </p>
           <h3>Loan term</h3>
           <p>
-            A 15-year term raises principal and interest to {formatCurrency(ex15.monthlyPrincipalInterest)}{" "}
-            but saves {formatCurrency(ex.totalInterest - ex15.totalInterest)} in interest at the same rate.
-            Fifteen-year loans also tend to come with lower rates, which saves more.
+            A 15-year term raises principal and interest to{" "}
+            {formatCurrency(ex15.monthlyPrincipalInterest)} but saves{" "}
+            {formatCurrency(exampleResult.totalInterest - ex15.totalInterest)}{" "}
+            in interest at the same rate. Fifteen-year loans also tend to come
+            with lower rates, which saves more.
           </p>
           <h3>Down payment</h3>
           <p>
-            Putting down 10% instead of 20% means borrowing {formatCurrency(exLowDown.loanAmount)}, which
-            raises the total payment to {formatCurrency(exLowDown.totalMonthly)} once PMI of about{" "}
-            {formatCurrency(exLowDown.monthlyPmi)} a month is added.
+            Putting down 10% instead of 20% means borrowing{" "}
+            {formatCurrency(exLowDown.loanAmount)}, which raises the total
+            payment to {formatCurrency(exLowDown.totalMonthly)} once PMI of
+            about {formatCurrency(exLowDown.monthlyPmi)} a month is added.
           </p>
 
           <h2>How PMI works and how to remove it</h2>
           <p>
-            Lenders usually require PMI when your loan is more than 80% of the home&apos;s value. It protects
-            the lender, not you. Under federal rules for most conventional loans on a primary home, you can
-            ask your servicer in writing to cancel PMI once the balance is scheduled to reach 80% of the
-            home&apos;s original value, if your payments are current and the home hasn&apos;t lost value. It
-            must end automatically when the balance reaches 78%.
+            Lenders usually require PMI when your loan is more than 80% of the
+            home&apos;s value. It protects the lender, not you. Under federal
+            rules for most conventional loans on a primary home, you can ask
+            your servicer in writing to cancel PMI once the balance is scheduled
+            to reach 80% of the home&apos;s original value, if your payments are
+            current and the home hasn&apos;t lost value. It must end
+            automatically when the balance reaches 78%.
           </p>
           {exLowDown.pmiEndsMonth && (
             <p>
               With 10% down in the example, the balance reaches 78% after about{" "}
-              {formatDuration(exLowDown.pmiEndsMonth)} of regular payments. Extra payments don&apos;t change that
-              automatic date, but they get you to 80% sooner, when you can ask to cancel. FHA and VA loans have
-              their own mortgage insurance rules.
+              {formatDuration(exLowDown.pmiEndsMonth)} of regular payments.
+              Extra payments don&apos;t change that automatic date, but they get
+              you to 80% sooner, when you can ask to cancel. FHA and VA loans
+              have their own mortgage insurance rules.
             </p>
           )}
 
           <h2>Paying extra toward principal</h2>
           <p>
-            Any amount above your scheduled payment goes straight to the balance, so less interest builds
-            up afterward. In the example, paying $200 extra a month finishes the loan in{" "}
+            Any amount above your scheduled payment goes straight to the
+            balance, so less interest builds up afterward. In the example,
+            paying $200 extra a month finishes the loan in{" "}
             {formatDuration(exExtra.payoffMonths)} instead of 30 years and saves{" "}
-            {formatCurrency(exExtra.interestSaved)}. Enter an amount in the Extra payment field to see your
-            own numbers.
+            {formatCurrency(exExtra.interestSaved)}. Enter an amount in the
+            Extra payment field to see your own numbers.
           </p>
         </>
       }
