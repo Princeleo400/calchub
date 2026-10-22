@@ -22,6 +22,17 @@ interface CalculatorShellProps {
   sources?: Array<{ label: string; href: string }>;
   /** ISO date the page content was last checked, e.g. "2026-10-18". */
   lastReviewed: string;
+  /**
+   * For pages built on a calculator but living at their own address, such as
+   * /how-much-house-can-i-afford/70k. Defaults to the calculator's own page.
+   */
+  page?: {
+    path: string;
+    /** Breadcrumb label for this page. */
+    label: string;
+    /** Optional parent crumb between the category and this page. */
+    parent?: { label: string; path: string };
+  };
 }
 
 /**
@@ -37,9 +48,12 @@ export function CalculatorShell({
   faqs,
   sources,
   lastReviewed,
+  page,
 }: CalculatorShellProps) {
   const meta = getCalculator(slug);
-  const path = `/${slug}`;
+  const path = page?.path ?? `/${slug}`;
+  const currentLabel = page?.label ?? meta.name;
+  const parent = page?.parent;
   const reviewed = new Date(`${lastReviewed}T00:00:00Z`).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -51,6 +65,7 @@ export function CalculatorShell({
     webApplicationJsonLd({ name: title, description: meta.description, path, category: meta.category }),
     breadcrumbJsonLd([
       { name: "Home", path: "/" },
+      ...(parent ? [{ name: parent.label, path: parent.path }] : []),
       { name: title, path },
     ]),
   ];
@@ -61,7 +76,7 @@ export function CalculatorShell({
       <JsonLd data={structuredData} />
 
       <nav aria-label="Breadcrumb" className="text-xs text-slate-500 dark:text-slate-400">
-        <ol className="flex items-center gap-1.5">
+        <ol className="flex flex-wrap items-center gap-1.5">
           <li>
             <Link href="/" className="hover:text-slate-900 dark:hover:text-slate-50">
               Home
@@ -73,9 +88,19 @@ export function CalculatorShell({
               {categoryLabels[meta.category]}
             </Link>
           </li>
+          {parent && (
+            <>
+              <li aria-hidden>/</li>
+              <li>
+                <Link href={parent.path} className="hover:text-slate-900 dark:hover:text-slate-50">
+                  {parent.label}
+                </Link>
+              </li>
+            </>
+          )}
           <li aria-hidden>/</li>
           <li aria-current="page" className="text-slate-700 dark:text-slate-200">
-            {meta.name}
+            {currentLabel}
           </li>
         </ol>
       </nav>

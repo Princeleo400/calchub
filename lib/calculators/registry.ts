@@ -7,6 +7,7 @@ import {
   PiggyBank,
   Ruler,
   Scale,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import type { CalculatorCategory, CalculatorSlug } from "@/lib/types";
@@ -27,15 +28,26 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "mortgage-calculator",
     name: "Mortgage Calculator",
-    description: "Monthly payment with taxes, insurance, PMI and HOA, plus a full amortization schedule.",
+    description:
+      "Monthly payment with taxes, insurance, PMI and HOA, plus a full amortization schedule.",
     category: "finance",
     icon: House,
     live: true,
   },
   {
+    slug: "home-affordability-calculator",
+    name: "Home Affordability Calculator",
+    description:
+      "How much house you can afford on your income and debts, using lender guidelines.",
+    category: "finance",
+    icon: Wallet,
+    live: true,
+  },
+  {
     slug: "loan-calculator",
     name: "Loan Calculator",
-    description: "Payments and total interest for car, personal and student loans.",
+    description:
+      "Payments and total interest for car, personal and student loans.",
     category: "finance",
     icon: Calculator,
     live: true,
@@ -43,7 +55,8 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "debt-payoff-calculator",
     name: "Debt Payoff Calculator",
-    description: "Compare the snowball and avalanche methods and see your debt-free date.",
+    description:
+      "Compare the snowball and avalanche methods and see your debt-free date.",
     category: "finance",
     icon: CreditCard,
     live: true,
@@ -51,7 +64,8 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "savings-calculator",
     name: "Savings Calculator",
-    description: "How compound interest and regular deposits grow your savings.",
+    description:
+      "How compound interest and regular deposits grow your savings.",
     category: "finance",
     icon: PiggyBank,
     live: false,
@@ -59,7 +73,8 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "bmi-calculator",
     name: "BMI Calculator",
-    description: "Body mass index in metric or imperial, with the healthy weight range for your height.",
+    description:
+      "Body mass index in metric or imperial, with the healthy weight range for your height.",
     category: "health",
     icon: Scale,
     live: true,
@@ -67,7 +82,8 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "calorie-calculator",
     name: "Calorie Calculator",
-    description: "Daily calorie needs (TDEE) for maintaining, losing or gaining weight.",
+    description:
+      "Daily calorie needs (TDEE) for maintaining, losing or gaining weight.",
     category: "health",
     icon: Flame,
     live: true,
@@ -75,7 +91,8 @@ export const calculators: CalculatorMeta[] = [
   {
     slug: "macro-calculator",
     name: "Macro Calculator",
-    description: "Daily protein, carbs and fat for your calorie target and diet style.",
+    description:
+      "Daily protein, carbs and fat for your calorie target and diet style.",
     category: "health",
     icon: PieChart,
     live: false,
@@ -98,12 +115,17 @@ export function getCalculator(slug: CalculatorSlug): CalculatorMeta {
   return found;
 }
 
-export function calculatorsByCategory(category: CalculatorCategory): CalculatorMeta[] {
+export function calculatorsByCategory(
+  category: CalculatorCategory,
+): CalculatorMeta[] {
   return liveCalculators.filter((c) => c.category === category);
 }
 
 /** Up to `count` live calculators from the same category, then the other one. */
-export function relatedCalculators(slug: CalculatorSlug, count = 3): CalculatorMeta[] {
+export function relatedCalculators(
+  slug: CalculatorSlug,
+  count = 3,
+): CalculatorMeta[] {
   const current = getCalculator(slug);
   const others = liveCalculators.filter((c) => c.slug !== slug);
   const same = others.filter((c) => c.category === current.category);
