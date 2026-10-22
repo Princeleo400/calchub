@@ -3,6 +3,7 @@ export type CalculatorCategory = "finance" | "health";
 export type CalculatorSlug =
   | "mortgage-calculator"
   | "home-affordability-calculator"
+  | "stamp-duty-calculator"
   | "loan-calculator"
   | "debt-payoff-calculator"
   | "savings-calculator"

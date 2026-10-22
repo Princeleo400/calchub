@@ -69,6 +69,44 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Home affordability calculator</h2>
+      <p>
+        The affordability calculator runs the mortgage calculator in reverse. It sets a monthly housing budget as the
+        lower of two limits, then finds the home price whose full payment fits that budget:
+      </p>
+      <Formula>
+        {"Budget = min(housing % × monthly income, total % × monthly income − other debts)\nPrice  = (budget − insurance − HOA) ÷ (loan share × payment factor + tax rate ÷ 12 + PMI)"}
+      </Formula>
+      <p>
+        The default limits are the traditional 28% for housing and 36% for all debts; both can be changed. Prices are
+        rounded down to the nearest $1,000. Automated tests check that the price it gives produces exactly the
+        budgeted payment in the mortgage calculator.
+      </p>
+      <p>
+        Source:{" "}
+        <a href="https://selling-guide.fanniemae.com/sel/b3-6-02/debt-income-ratios">
+          Fannie Mae Selling Guide on debt-to-income ratios
+        </a>
+        .
+      </p>
+
+      <h2>UK Stamp Duty calculator</h2>
+      <p>
+        Stamp Duty Land Tax for residential property in England and Northern Ireland is charged in slices: each part
+        of the price is taxed at its band&apos;s rate and the slices are added together. First-time buyers use their
+        own bands up to £500,000 and pay standard rates above it. The additional-property and non-UK resident
+        surcharges add percentage points to every band on purchases of £40,000 or more. The total is rounded down to
+        the whole pound. Rates are held in one place in the code with the date they took effect and the date they
+        were last checked, and are rechecked after each UK Budget.
+      </p>
+      <p>
+        Source:{" "}
+        <a href="https://www.gov.uk/government/publications/rates-and-allowances-stamp-duty-land-tax/stamp-duty-land-tax-rates-31-october-2024-to-31-march-2025">
+          GOV.UK Stamp Duty Land Tax rates
+        </a>
+        .
+      </p>
+
       <h2>Loan calculator</h2>
       <p>
         Uses the same amortization formula as the mortgage calculator. The APR includes an upfront fee by solving

@@ -3,6 +3,7 @@ import {
   CreditCard,
   Flame,
   House,
+  Landmark,
   PieChart,
   PiggyBank,
   Ruler,
@@ -41,6 +42,15 @@ export const calculators: CalculatorMeta[] = [
       "How much house you can afford on your income and debts, using lender guidelines.",
     category: "finance",
     icon: Wallet,
+    live: true,
+  },
+  {
+    slug: "stamp-duty-calculator",
+    name: "UK Stamp Duty Calculator",
+    description:
+      "Stamp Duty Land Tax for England and Northern Ireland, including first-time buyer relief.",
+    category: "finance",
+    icon: Landmark,
     live: true,
   },
   {
