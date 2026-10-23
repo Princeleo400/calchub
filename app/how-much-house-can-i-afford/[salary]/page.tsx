@@ -32,6 +32,7 @@ export async function generateMetadata({
     title: `How Much House Can I Afford on ${formatCurrency(income)} a Year?`,
     description: `On a ${short(income)} salary you can afford a home of about ${formatCurrency(price)} with 20% down at 7%. See prices by down payment, rate and debts, and run your own numbers.`,
     path: `/how-much-house-can-i-afford/${salary}`,
+    hasOwnSocialImage: true,
   });
 }
 

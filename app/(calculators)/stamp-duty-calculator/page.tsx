@@ -15,6 +15,7 @@ export const metadata = buildMetadata({
   description:
     "Free UK Stamp Duty calculator for England and Northern Ireland. Work out SDLT for home movers, first-time buyers, second homes and non-UK residents, with a band-by-band breakdown.",
   path: "/stamp-duty-calculator",
+  hasOwnSocialImage: true,
 });
 
 const gbp = (amount: number) => formatCurrency(amount, "GBP");

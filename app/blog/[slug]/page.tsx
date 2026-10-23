@@ -22,6 +22,7 @@ export async function generateMetadata({
     title: post.title,
     description: post.description,
     path: `/blog/${post.slug}`,
+    hasOwnSocialImage: true,
   });
   return {
     ...base,

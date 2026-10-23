@@ -16,6 +16,7 @@ export const metadata = buildMetadata({
   description:
     "Free BMI calculator. Find your body mass index in pounds and feet or kilograms and centimeters, see your CDC weight category, and the healthy weight range for your height.",
   path: "/bmi-calculator",
+  hasOwnSocialImage: true,
 });
 
 // Healthy weight ranges by height, computed from the same formula as the calculator.

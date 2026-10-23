@@ -1,7 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import {
+  GoogleAnalyticsPageViews,
+  GoogleTags,
+} from "@/components/analytics/GoogleTags";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { adsenseClient } from "@/lib/googleConfig";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -19,6 +24,10 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
+  // Lets AdSense confirm you own the site when you apply.
+  ...(adsenseClient
+    ? { other: { "google-adsense-account": adsenseClient } }
+    : {}),
 };
 
 export const viewport: Viewport = {
@@ -29,13 +38,14 @@ export const viewport: Viewport = {
 };
 
 // Runs before first paint: saved choice wins, otherwise follow the OS.
-const themeScript = `(function(){try{var t=localStorage.getItem("calchub_theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d)document.documentElement.classList.add("dark")}catch(e){}})()`;
+const themeScript = `(function(){try{var savedTheme=localStorage.getItem("calchub_theme");var prefersDark=savedTheme?savedTheme==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(prefersDark)document.documentElement.classList.add("dark")}catch(error){}})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <GoogleTags />
       </head>
       <body className="flex min-h-screen flex-col font-sans">
         <a
@@ -49,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <GoogleAnalyticsPageViews />
       </body>
     </html>
   );

@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import {
+  adsenseClient,
+  adUnitIdFor,
+  showAdPlaceholders,
+  type AdPosition,
+} from "@/lib/googleConfig";
 import { cn } from "@/lib/utils";
 
-export type AdPosition =
-  "header" | "sidebar" | "in-content" | "footer" | "mobile-banner";
+export type { AdPosition };
 
 // Reserved heights stop the page jumping when an ad loads (layout shift).
 const positions: Record<AdPosition, { size: string; className: string }> = {
@@ -30,8 +35,6 @@ const positions: Record<AdPosition, { size: string; className: string }> = {
   },
 };
 
-const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
-
 declare global {
   interface Window {
     adsbygoogle?: unknown[];
@@ -40,19 +43,21 @@ declare global {
 
 interface AdSlotProps {
   position: AdPosition;
-  /** AdSense ad unit id for this position (data-ad-slot). */
+  /** Overrides the ad unit id from the environment for this one slot. */
   slot?: string;
   className?: string;
 }
 
 /**
- * Shows a labelled placeholder until AdSense is approved and
- * NEXT_PUBLIC_ADSENSE_CLIENT plus a slot id are set; then the real unit.
- * The AdSense loader script itself is added in the root layout at approval.
+ * The real AdSense unit once NEXT_PUBLIC_ADSENSE_CLIENT and this position's
+ * ad unit id are set. Until then: a labelled placeholder in development (so
+ * you can see the layout) and nothing at all on the live site, so visitors
+ * and AdSense reviewers never see empty boxes.
  */
 export function AdSlot({ position, slot, className }: AdSlotProps) {
   const config = positions[position];
-  const live = Boolean(client && slot);
+  const adUnitId = adUnitIdFor(position, slot);
+  const live = adUnitId !== undefined;
   const pushed = useRef(false);
 
   useEffect(() => {
@@ -64,6 +69,8 @@ export function AdSlot({ position, slot, className }: AdSlotProps) {
       // Ad blockers throw here; the reserved space simply stays empty.
     }
   }, [live]);
+
+  if (!live && !showAdPlaceholders) return null;
 
   return (
     <div
@@ -78,8 +85,8 @@ export function AdSlot({ position, slot, className }: AdSlotProps) {
       {live ? (
         <ins
           className="adsbygoogle block w-full"
-          data-ad-client={client}
-          data-ad-slot={slot}
+          data-ad-client={adsenseClient}
+          data-ad-slot={adUnitId}
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
