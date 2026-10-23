@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCalculator, categoryLabels } from "@/lib/calculators/registry";
+import { adUnitIdFor, showAdPlaceholders } from "@/lib/googleConfig";
 import {
   breadcrumbJsonLd,
   faqJsonLd,
@@ -10,6 +11,7 @@ import {
   type FaqItem,
 } from "@/lib/seo/jsonLd";
 import type { CalculatorSlug } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { RelatedCalculators } from "./RelatedCalculators";
 
 interface CalculatorShellProps {
@@ -59,6 +61,9 @@ export function CalculatorShell({
   const path = page?.path ?? `/${slug}`;
   const currentLabel = page?.label ?? meta.name;
   const parent = page?.parent;
+  // Without a live sidebar ad the calculator uses the full width.
+  const showSidebar =
+    adUnitIdFor("sidebar") !== undefined || showAdPlaceholders;
   const reviewed = new Date(`${lastReviewed}T00:00:00Z`).toLocaleDateString(
     "en-US",
     {
@@ -144,7 +149,12 @@ export function CalculatorShell({
 
       <AdSlot position="header" className="mt-6" />
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div
+        className={cn(
+          "mt-6 grid gap-8",
+          showSidebar && "lg:grid-cols-[minmax(0,1fr)_300px]",
+        )}
+      >
         <div className="min-w-0">
           {children}
 
@@ -221,11 +231,13 @@ export function CalculatorShell({
           </p>
         </div>
 
-        <aside className="hidden lg:block" aria-label="Advertisement">
-          <div className="sticky top-20">
-            <AdSlot position="sidebar" />
-          </div>
-        </aside>
+        {showSidebar && (
+          <aside className="hidden lg:block" aria-label="Advertisement">
+            <div className="sticky top-20">
+              <AdSlot position="sidebar" />
+            </div>
+          </aside>
+        )}
       </div>
 
       <RelatedCalculators current={slug} />

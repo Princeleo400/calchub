@@ -15,6 +15,7 @@ export const metadata = buildMetadata({
   description:
     "Free calorie calculator using the Mifflin-St Jeor equation. Estimate your resting calories (BMR) and daily needs (TDEE), plus targets for gradual weight loss or gain.",
   path: "/calorie-calculator",
+  hasOwnSocialImage: true,
 });
 
 // Worked example, computed with the same function as the calculator.

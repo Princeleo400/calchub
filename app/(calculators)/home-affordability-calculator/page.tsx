@@ -16,6 +16,7 @@ export const metadata = buildMetadata({
   description:
     "Free home affordability calculator. Enter your income and debts to see the home price you can afford, the monthly payment, and how lenders' debt-to-income limits apply.",
   path: "/home-affordability-calculator",
+  hasOwnSocialImage: true,
 });
 
 const exampleResult = affordFor(75_000);

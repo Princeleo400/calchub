@@ -14,6 +14,7 @@ export const metadata = buildMetadata({
   description:
     "Free mortgage calculator. See your full monthly payment with property tax, insurance, PMI and HOA, a yearly amortization schedule, and how extra payments cut interest.",
   path: "/mortgage-calculator",
+  hasOwnSocialImage: true,
 });
 
 // Worked examples are computed, so the text always matches the calculator.

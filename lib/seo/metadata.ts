@@ -9,6 +9,12 @@ interface BuildMetadataOptions {
   path: string;
   /** Set for pages that should not be indexed (e.g. thank-you pages). */
   noIndex?: boolean;
+  /**
+   * Set when the page's folder has its own opengraph-image file. Metadata set
+   * here would replace that file's image, so the site-wide image is only
+   * added to pages without one.
+   */
+  hasOwnSocialImage?: boolean;
 }
 
 export function buildMetadata({
@@ -16,8 +22,19 @@ export function buildMetadata({
   description,
   path,
   noIndex,
+  hasOwnSocialImage,
 }: BuildMetadataOptions): Metadata {
   const url = `${site.url}${path}`;
+  const images = hasOwnSocialImage
+    ? undefined
+    : [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: `${site.name}: ${site.tagline}`,
+        },
+      ];
   return {
     title,
     description,
@@ -29,11 +46,13 @@ export function buildMetadata({
       description,
       siteName: site.name,
       locale: site.locale,
+      ...(images ? { images } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${site.name}`,
       description,
+      ...(images ? { images } : {}),
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
   };

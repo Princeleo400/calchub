@@ -11,6 +11,7 @@ export const metadata = buildMetadata({
   description:
     "Free loan calculator for car, personal and student loans. See your monthly payment, total interest, true APR with fees, and how extra payments save money.",
   path: "/loan-calculator",
+  hasOwnSocialImage: true,
 });
 
 // Worked examples are computed, so the text always matches the calculator.

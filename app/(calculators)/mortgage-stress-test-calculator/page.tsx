@@ -19,6 +19,7 @@ export const metadata = buildMetadata({
   description:
     "Check whether you pass Canada's mortgage stress test. See your qualifying rate, GDS and TDS ratios, CMHC insurance premium and the most you can borrow.",
   path: "/mortgage-stress-test-calculator",
+  hasOwnSocialImage: true,
 });
 
 const cad = (amount: number) => formatCurrency(amount, "CAD");

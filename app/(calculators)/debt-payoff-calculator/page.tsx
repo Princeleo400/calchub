@@ -11,6 +11,7 @@ export const metadata = buildMetadata({
   description:
     "Free debt payoff calculator. Enter your debts to see your debt-free date, total interest, and whether the snowball or avalanche method saves you more.",
   path: "/debt-payoff-calculator",
+  hasOwnSocialImage: true,
 });
 
 // The same debts the calculator starts with, so the worked example matches it.
