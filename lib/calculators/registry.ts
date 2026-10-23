@@ -85,10 +85,10 @@ export const calculators: CalculatorMeta[] = [
     slug: "savings-calculator",
     name: "Savings Calculator",
     description:
-      "How compound interest and regular deposits grow your savings.",
+      "How a starting balance and monthly deposits grow with compound interest.",
     category: "finance",
     icon: PiggyBank,
-    live: false,
+    live: true,
   },
   {
     slug: "bmi-calculator",

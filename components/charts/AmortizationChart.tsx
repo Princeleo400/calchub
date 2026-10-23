@@ -10,17 +10,13 @@ import {
   YAxis,
 } from "recharts";
 import type { YearRow } from "@/lib/calculators/mortgage";
+import { compactMoney, niceTicks } from "@/lib/chartTicks";
 import { formatCurrency } from "@/lib/utils";
 
 // Colors come from CSS variables defined on the wrapper (see MortgageChart),
 // so light and dark mode each use their own validated step.
 const PRINCIPAL = "var(--series-1)";
 const INTEREST = "var(--series-2)";
-
-function compact(value: number): string {
-  if (value >= 1000) return `$${Math.round(value / 1000)}k`;
-  return `$${Math.round(value)}`;
-}
 
 interface TooltipPayload {
   payload?: YearRow;
@@ -69,6 +65,9 @@ export default function AmortizationChart({
 }: {
   schedule: YearRow[];
 }) {
+  const ticks = niceTicks(
+    Math.max(...schedule.map((row) => row.principal + row.interest)),
+  );
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart
@@ -86,7 +85,9 @@ export default function AmortizationChart({
           minTickGap={16}
         />
         <YAxis
-          tickFormatter={compact}
+          ticks={ticks}
+          domain={[0, ticks.at(-1) ?? 0]}
+          tickFormatter={compactMoney}
           tickLine={false}
           axisLine={false}
           width={44}

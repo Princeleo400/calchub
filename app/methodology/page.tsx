@@ -188,6 +188,42 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Savings calculator</h2>
+      <p>
+        The balance is simulated month by month. Each month, interest is added
+        to the balance and then that month&apos;s deposit is made, so deposits
+        count from the end of the month they are made in. The starting balance
+        earns interest from the first month.
+      </p>
+      <ul>
+        <li>
+          Monthly compounding uses the rate ÷ 12 each month. Daily, quarterly
+          and yearly compounding use the monthly rate that produces the same
+          yearly yield: (1 + rate ÷ n)^(n ÷ 12) − 1, where n is the number of
+          compounding periods a year.
+        </li>
+        <li>
+          The annual percentage yield (APY) is (1 + rate ÷ n)^n − 1, which
+          matches the Truth in Savings definition for an account held for a full
+          year.
+        </li>
+        <li>
+          A yearly increase raises the monthly deposit at the start of each new
+          year.
+        </li>
+        <li>
+          The deposit needed for a goal is solved directly from the future-value
+          formula and assumes a fixed deposit with no yearly increase.
+        </li>
+      </ul>
+      <p>
+        Tax and inflation are not included. Source:{" "}
+        <a href="https://www.consumerfinance.gov/rules-policy/regulations/1030/a/">
+          CFPB, Regulation DD Appendix A
+        </a>
+        .
+      </p>
+
       <h2>Debt payoff calculator</h2>
       <p>The plan is simulated month by month:</p>
       <ol>
