@@ -340,6 +340,36 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Ideal weight calculator</h2>
+      <p>
+        Four published formulas each start from a weight at 5 feet and add a
+        fixed amount for every inch above it:
+      </p>
+      <ul>
+        <li>Devine (1974): men 50 kg, women 45.5 kg, plus 2.3 kg per inch.</li>
+        <li>
+          Robinson (1983): men 52 kg plus 1.9 kg per inch; women 49 kg plus 1.7
+          kg per inch.
+        </li>
+        <li>
+          Miller (1983): men 56.2 kg plus 1.41 kg per inch; women 53.1 kg plus
+          1.36 kg per inch.
+        </li>
+        <li>
+          Hamwi (1964): men 106 lb plus 6 lb per inch; women 100 lb plus 5 lb
+          per inch.
+        </li>
+      </ul>
+      <p>
+        Below 5 feet, the amount per inch is subtracted, as Robinson et al.
+        suggested. The healthy range is the weight that gives a BMI of 18.5 to
+        24.9 at the same height. Source:{" "}
+        <a href="https://pubmed.ncbi.nlm.nih.gov/10981254/">
+          Pai and Paloucek, Annals of Pharmacotherapy (2000)
+        </a>
+        .
+      </p>
+
       <h2>Found a problem?</h2>
       <p>
         If a result looks wrong, please <Link href="/contact">tell us</Link> the
