@@ -115,7 +115,7 @@ export const calculators: CalculatorMeta[] = [
       "Daily protein, carbs and fat for your calorie target and diet style.",
     category: "health",
     icon: PieChart,
-    live: false,
+    live: true,
   },
   {
     slug: "ideal-weight-calculator",

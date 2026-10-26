@@ -305,6 +305,41 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Macro calculator</h2>
+      <p>
+        Grams come from the calorie target and the share of calories chosen for
+        each macro, using the standard Atwater factors: 4 calories per gram of
+        protein and carbohydrate, and 9 per gram of fat. Estimated calories use
+        the same Mifflin-St Jeor method as the calorie calculator.
+      </p>
+      <ul>
+        <li>
+          Each split is checked against the adult Acceptable Macronutrient
+          Distribution Ranges: carbohydrate 45 to 65%, fat 20 to 35% and protein
+          10 to 35% of calories.
+        </li>
+        <li>
+          Protein per kilogram is compared with the adult RDA of 0.8 g/kg and
+          the 1.4 to 2.0 g/kg range the International Society of Sports
+          Nutrition finds sufficient for most people who exercise.
+        </li>
+        <li>
+          Targets under 1,200 calories a day, or below estimated resting needs,
+          show a caution.
+        </li>
+      </ul>
+      <p>
+        Sources:{" "}
+        <a href="https://doi.org/10.17226/10490">
+          Institute of Medicine Dietary Reference Intakes (2005)
+        </a>{" "}
+        and{" "}
+        <a href="https://pubmed.ncbi.nlm.nih.gov/28642676/">
+          ISSN position stand on protein and exercise (2017)
+        </a>
+        .
+      </p>
+
       <h2>Found a problem?</h2>
       <p>
         If a result looks wrong, please <Link href="/contact">tell us</Link> the
