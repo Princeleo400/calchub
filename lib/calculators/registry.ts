@@ -7,12 +7,17 @@ import {
   Landmark,
   PieChart,
   PiggyBank,
+  Receipt,
   Ruler,
   Scale,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-import type { CalculatorCategory, CalculatorSlug } from "@/lib/types";
+import type {
+  CalculatorCategory,
+  CalculatorRegion,
+  CalculatorSlug,
+} from "@/lib/types";
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -24,6 +29,15 @@ export interface CalculatorMeta {
   icon: LucideIcon;
   /** Only live calculators are linked anywhere on the site. */
   live: boolean;
+  /** Page path when it is not "/<slug>", e.g. a country section. */
+  path?: string;
+  /**
+   * Country-specific calculators live in their own section and menu, so the
+   * main Finance and Health lists stay relevant to every visitor.
+   */
+  region?: CalculatorRegion;
+  /** Hand-picked related calculators, used instead of the automatic list. */
+  related?: CalculatorSlug[];
 }
 
 export const calculators: CalculatorMeta[] = [
@@ -125,7 +139,29 @@ export const calculators: CalculatorMeta[] = [
     icon: Ruler,
     live: true,
   },
+  {
+    slug: "nigeria-paye-calculator",
+    name: "Nigeria PAYE Tax Calculator",
+    description:
+      "Monthly PAYE and take-home pay under the Nigeria Tax Act 2025, with rent relief, pension and NHF.",
+    category: "finance",
+    icon: Receipt,
+    live: true,
+    path: "/nigeria/paye-calculator",
+    region: "nigeria",
+    // Useful anywhere, unlike the US, UK and Canada housing tools.
+    related: [
+      "savings-calculator",
+      "loan-calculator",
+      "debt-payoff-calculator",
+    ],
+  },
 ];
+
+/** The page address for a calculator. */
+export function calculatorPath(calculator: CalculatorMeta): string {
+  return calculator.path ?? `/${calculator.slug}`;
+}
 
 export const liveCalculators = calculators.filter(
   (calculator) => calculator.live,
@@ -141,9 +177,21 @@ export function calculatorsByCategory(
   category: CalculatorCategory,
 ): CalculatorMeta[] {
   return liveCalculators.filter(
-    (calculator) => calculator.category === category,
+    (calculator) => calculator.category === category && !calculator.region,
   );
 }
+
+/** Live calculators for one country section, e.g. /nigeria. */
+export function regionalCalculators(
+  region: CalculatorRegion,
+): CalculatorMeta[] {
+  return liveCalculators.filter((calculator) => calculator.region === region);
+}
+
+export const regionLabels: Record<
+  CalculatorRegion,
+  { label: string; path: string }
+> = { nigeria: { label: "Nigeria", path: "/nigeria" } };
 
 /** Up to `count` live calculators from the same category, then the other one. */
 export function relatedCalculators(
@@ -151,15 +199,25 @@ export function relatedCalculators(
   count = 3,
 ): CalculatorMeta[] {
   const current = getCalculator(slug);
+  if (current.related) {
+    return current.related
+      .map(getCalculator)
+      .filter((calculator) => calculator.live)
+      .slice(0, count);
+  }
+  // Main calculators never suggest country-specific ones; a country tool
+  // suggests its own section first, then the main calculators.
   const others = liveCalculators.filter(
-    (calculator) => calculator.slug !== slug,
+    (calculator) =>
+      calculator.slug !== slug &&
+      (!calculator.region || calculator.region === current.region),
   );
-  const same = others.filter(
-    (calculator) => calculator.category === current.category,
-  );
-  const rest = others.filter(
-    (calculator) => calculator.category !== current.category,
-  );
+  const isCloser = (calculator: CalculatorMeta) =>
+    current.region
+      ? calculator.region === current.region
+      : calculator.category === current.category;
+  const same = others.filter(isCloser);
+  const rest = others.filter((calculator) => !isCloser(calculator));
   return [...same, ...rest].slice(0, count);
 }
 

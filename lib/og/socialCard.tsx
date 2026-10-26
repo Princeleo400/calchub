@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { getCalculator } from "@/lib/calculators/registry";
+import { getCalculator, regionLabels } from "@/lib/calculators/registry";
 import { site } from "@/lib/site";
 import type { CalculatorSlug } from "@/lib/types";
 
@@ -178,7 +178,9 @@ export function calculatorCardAlt(slug: CalculatorSlug) {
 export function renderCalculatorCard(slug: CalculatorSlug) {
   const calculator = getCalculator(slug);
   return renderSocialCard({
-    eyebrow: `${calculator.category} calculator`,
+    eyebrow: calculator.region
+      ? `${regionLabels[calculator.region].label} calculator`
+      : `${calculator.category} calculator`,
     title: calculator.name,
     description: calculator.description,
   });

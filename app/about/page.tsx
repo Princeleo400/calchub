@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ContentPage } from "@/components/layout/ContentPage";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { liveCalculators } from "@/lib/calculators/registry";
+import { liveCalculators, calculatorPath } from "@/lib/calculators/registry";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/site";
 
@@ -115,7 +115,7 @@ export default function AboutPage() {
       <ul>
         {liveCalculators.map((calculator) => (
           <li key={calculator.slug}>
-            <Link href={`/${calculator.slug}`}>{calculator.name}</Link>:{" "}
+            <Link href={calculatorPath(calculator)}>{calculator.name}</Link>:{" "}
             {calculator.description}
           </li>
         ))}

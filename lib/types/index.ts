@@ -11,7 +11,11 @@ export type CalculatorSlug =
   | "bmi-calculator"
   | "calorie-calculator"
   | "macro-calculator"
-  | "ideal-weight-calculator";
+  | "ideal-weight-calculator"
+  | "nigeria-paye-calculator";
+
+/** Country sections with their own calculators, separate from the main menus. */
+export type CalculatorRegion = "nigeria";
 
 /** Values that can round-trip through a URL query string. */
 export type InputValue = string | number | boolean;
