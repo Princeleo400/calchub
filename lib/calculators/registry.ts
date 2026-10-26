@@ -123,7 +123,7 @@ export const calculators: CalculatorMeta[] = [
     description: "Ideal body weight from four medical formulas, side by side.",
     category: "health",
     icon: Ruler,
-    live: false,
+    live: true,
   },
 ];
 
