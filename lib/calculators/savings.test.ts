@@ -4,6 +4,7 @@ import {
   annualYield,
   calculateSavings,
   monthlyDepositForGoal,
+  monthsToReachGoal,
   type SavingsInputs,
 } from "./savings.ts";
 
@@ -147,4 +148,32 @@ test("bad inputs do not break the result", () => {
   });
   assert.equal(result.finalBalance, 0);
   assert.equal(result.schedule.length, 0);
+});
+
+test("months to reach a goal", () => {
+  const base = { initialDeposit: 0, rate: 0, compounding: "monthly" as const };
+  // No interest: $10,000 at $500 a month takes exactly 20 months.
+  assert.equal(monthsToReachGoal({ ...base, monthlyDeposit: 500 }, 10_000), 20);
+  // With interest: one month earlier is short of the goal, the answer reaches
+  // it. Closed form for end-of-month deposits: D × ((1 + i)^n − 1) / i.
+  const deposit = 1_000;
+  const monthlyRate = 0.05 / 12;
+  const months = monthsToReachGoal(
+    { ...base, monthlyDeposit: deposit, rate: 5 },
+    100_000,
+  )!;
+  const balanceAfter = (count: number) =>
+    (deposit * ((1 + monthlyRate) ** count - 1)) / monthlyRate;
+  assert.ok(balanceAfter(months - 1) < 100_000);
+  assert.ok(balanceAfter(months) >= 100_000);
+  assert.ok(months < 100, "interest makes it faster than 100 deposits");
+  // Already there, and never there.
+  assert.equal(
+    monthsToReachGoal(
+      { ...base, initialDeposit: 20_000, monthlyDeposit: 0 },
+      10_000,
+    ),
+    0,
+  );
+  assert.equal(monthsToReachGoal({ ...base, monthlyDeposit: 0 }, 10_000), null);
 });

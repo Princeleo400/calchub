@@ -138,3 +138,26 @@ export function monthlyDepositForGoal(
   const annuityFactor = monthlyRate === 0 ? months : (growth - 1) / monthlyRate;
   return shortfall / annuityFactor;
 }
+
+/**
+ * How many whole months of fixed deposits it takes to reach a goal, counting
+ * the month the balance first gets there. Returns null if it never does
+ * within 100 years (for example, no deposits and no interest).
+ */
+export function monthsToReachGoal(
+  input: Omit<SavingsInputs, "years" | "annualIncreasePct">,
+  goal: number,
+): number | null {
+  const monthlyRate = monthlyGrowthRate(
+    Math.max(0, input.rate),
+    input.compounding,
+  );
+  const deposit = Math.max(0, input.monthlyDeposit);
+  let balance = Math.max(0, input.initialDeposit);
+  if (balance >= goal) return 0;
+  for (let month = 1; month <= 1200; month++) {
+    balance += balance * monthlyRate + deposit;
+    if (balance >= goal) return month;
+  }
+  return null;
+}
