@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { calculatorsByCategory } from "@/lib/calculators/registry";
+import {
+  calculatorsByCategory,
+  calculatorPath,
+} from "@/lib/calculators/registry";
 import { site } from "@/lib/site";
 import { MobileNav } from "./MobileNav";
 import { ThemeToggle } from "./ThemeToggle";
@@ -27,6 +30,12 @@ export function Header() {
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           <NavGroup label="Finance" items={finance} />
           <NavGroup label="Health" items={health} />
+          <Link
+            href="/nigeria"
+            className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-50"
+          >
+            Nigeria
+          </Link>
           <Link
             href="/blog"
             className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-50"
@@ -75,7 +84,7 @@ function NavGroup({
           return (
             <li key={calc.slug}>
               <Link
-                href={`/${calc.slug}`}
+                href={calculatorPath(calc)}
                 className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-slate-700 transition-colors duration-150 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 <Icon className="size-4 text-slate-400" aria-hidden />

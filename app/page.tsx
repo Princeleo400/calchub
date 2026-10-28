@@ -2,8 +2,10 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Calculator, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
+  calculatorPath,
   calculatorsByCategory,
   categoryLabels,
+  regionalCalculators,
 } from "@/lib/calculators/registry";
 import type { CalculatorCategory } from "@/lib/types";
 import { site } from "@/lib/site";
@@ -11,12 +13,13 @@ import { site } from "@/lib/site";
 const sections: Array<{ category: CalculatorCategory; intro: string }> = [
   {
     category: "finance",
-    intro: "Mortgages, loans and debt, with every payment broken down.",
+    intro:
+      "Mortgages, loans, debt and savings, with every payment broken down.",
   },
   {
     category: "health",
     intro:
-      "Body mass index and daily calorie needs, based on CDC and published formulas.",
+      "BMI, calories, macros and ideal weight, based on official guidance and published formulas.",
   },
 ];
 
@@ -105,7 +108,7 @@ export default function HomePage() {
               return (
                 <li key={calc.slug}>
                   <Link
-                    href={`/${calc.slug}`}
+                    href={calculatorPath(calc)}
                     className="group flex h-full gap-3 rounded-lg border border-slate-200 p-4 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-900"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -130,6 +133,51 @@ export default function HomePage() {
           </ul>
         </section>
       ))}
+
+      <section
+        id="nigeria"
+        aria-labelledby="nigeria-heading"
+        className="mt-14 scroll-mt-20"
+      >
+        <h2
+          id="nigeria-heading"
+          className="text-xl font-semibold text-slate-900 dark:text-slate-50"
+        >
+          For Nigeria
+        </h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Tax and pay tools in naira, built on the Nigeria Tax Act 2025.
+        </p>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {regionalCalculators("nigeria").map((calc) => {
+            const Icon = calc.icon;
+            return (
+              <li key={calc.slug}>
+                <Link
+                  href={calculatorPath(calc)}
+                  className="group flex h-full gap-3 rounded-lg border border-slate-200 p-4 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-900"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                    <Icon className="size-4" aria-hidden />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-slate-900 dark:text-slate-50">
+                      {calc.name}
+                      <ArrowRight
+                        className="size-3.5 text-slate-400 transition-colors duration-150 group-hover:text-blue-600"
+                        aria-hidden
+                      />
+                    </span>
+                    <span className="mt-1 block text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                      {calc.description}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
       <section
         aria-labelledby="how-heading"

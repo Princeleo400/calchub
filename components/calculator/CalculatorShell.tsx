@@ -2,7 +2,12 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getCalculator, categoryLabels } from "@/lib/calculators/registry";
+import {
+  calculatorPath,
+  categoryLabels,
+  getCalculator,
+  regionLabels,
+} from "@/lib/calculators/registry";
 import { adUnitIdFor, showAdPlaceholders } from "@/lib/googleConfig";
 import {
   breadcrumbJsonLd,
@@ -58,9 +63,14 @@ export function CalculatorShell({
   page,
 }: CalculatorShellProps) {
   const meta = getCalculator(slug);
-  const path = page?.path ?? `/${slug}`;
+  const path = page?.path ?? calculatorPath(meta);
   const currentLabel = page?.label ?? meta.name;
   const parent = page?.parent;
+  // Country tools sit under their section (Home / Nigeria / ...); the rest
+  // under their category (Home / Finance / ...).
+  const section = meta.region
+    ? regionLabels[meta.region]
+    : { label: categoryLabels[meta.category], path: `/#${meta.category}` };
   // Without a live sidebar ad the calculator uses the full width.
   const showSidebar =
     adUnitIdFor("sidebar") !== undefined || showAdPlaceholders;
@@ -83,6 +93,7 @@ export function CalculatorShell({
     }),
     breadcrumbJsonLd([
       { name: "Home", path: "/" },
+      ...(meta.region ? [{ name: section.label, path: section.path }] : []),
       ...(parent ? [{ name: parent.label, path: parent.path }] : []),
       { name: title, path },
     ]),
@@ -109,10 +120,10 @@ export function CalculatorShell({
           <li aria-hidden>/</li>
           <li>
             <Link
-              href={`/#${meta.category}`}
+              href={section.path}
               className="hover:text-slate-900 dark:hover:text-slate-50"
             >
-              {categoryLabels[meta.category]}
+              {section.label}
             </Link>
           </li>
           {parent && (
@@ -219,8 +230,8 @@ export function CalculatorShell({
 
           <p className="mt-8 max-w-3xl text-xs leading-relaxed text-slate-500 dark:text-slate-400">
             Last reviewed <time dateTime={lastReviewed}>{reviewed}</time>.
-            Results are estimates for general information and are not financial
-            or medical advice.{" "}
+            Results are estimates for general information and are not financial,
+            tax or medical advice.{" "}
             <Link
               href="/methodology"
               className="underline underline-offset-2 hover:text-slate-900 dark:hover:text-slate-50"

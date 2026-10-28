@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SALARIES, salarySlug } from "@/lib/affordability/salaries";
 import { posts } from "@/lib/blog";
-import { liveCalculators } from "@/lib/calculators/registry";
+import { liveCalculators, calculatorPath } from "@/lib/calculators/registry";
 import { site } from "@/lib/site";
 
 // Every public page. New calculators, salary pages and articles appear here
@@ -9,12 +9,15 @@ import { site } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   const pageUrl = (path: string) => `${site.url}${path}`;
 
-  const corePages = ["/", "/blog", "/how-much-house-can-i-afford"].map(
-    (path) => ({ url: pageUrl(path) }),
-  );
+  const corePages = [
+    "/",
+    "/blog",
+    "/how-much-house-can-i-afford",
+    "/nigeria",
+  ].map((path) => ({ url: pageUrl(path) }));
 
   const calculatorPages = liveCalculators.map((calculator) => ({
-    url: pageUrl(`/${calculator.slug}`),
+    url: pageUrl(calculatorPath(calculator)),
   }));
 
   const salaryPages = SALARIES.map((income) => ({

@@ -6,6 +6,11 @@ interface DataTableProps {
   rows: ReactNode[][];
   /** Column indexes to right-align (numbers). */
   numeric?: number[];
+  /**
+   * Narrow tables can fit a phone screen. Wider ones keep a minimum width
+   * and scroll sideways instead of squashing their columns.
+   */
+  fitsPhone?: boolean;
 }
 
 /** Simple, accessible table for article data. The first column is the row header. */
@@ -14,12 +19,15 @@ export function DataTable({
   headers,
   rows,
   numeric = [],
+  fitsPhone = false,
 }: DataTableProps) {
   const align = (column: number) =>
     numeric.includes(column) ? "text-right" : "text-left";
   return (
     <div className="my-6 overflow-x-auto">
-      <table className="w-full min-w-[420px] text-sm tabular-nums">
+      <table
+        className={`w-full text-sm tabular-nums ${fitsPhone ? "" : "min-w-[420px]"}`}
+      >
         {caption && (
           <caption className="mb-2 text-left text-xs text-slate-500 dark:text-slate-400">
             {caption}

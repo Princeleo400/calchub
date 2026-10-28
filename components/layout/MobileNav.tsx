@@ -5,8 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import {
+  calculatorPath,
   calculatorsByCategory,
   categoryLabels,
+  regionalCalculators,
 } from "@/lib/calculators/registry";
 import type { CalculatorCategory } from "@/lib/types";
 
@@ -63,9 +65,9 @@ export function MobileNav() {
                 {calculatorsByCategory(category).map((calc) => (
                   <li key={calc.slug}>
                     <Link
-                      href={`/${calc.slug}`}
+                      href={calculatorPath(calc)}
                       aria-current={
-                        pathname === `/${calc.slug}` ? "page" : undefined
+                        pathname === calculatorPath(calc) ? "page" : undefined
                       }
                       className="block rounded-md px-2 py-2 text-sm text-slate-700 transition-colors duration-150 hover:bg-slate-100 aria-[current=page]:bg-blue-50 aria-[current=page]:text-blue-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:aria-[current=page]:bg-blue-950 dark:aria-[current=page]:text-blue-300"
                     >
@@ -76,6 +78,26 @@ export function MobileNav() {
               </ul>
             </div>
           ))}
+          <div className="mt-4">
+            <p className="text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
+              Nigeria
+            </p>
+            <ul className="mt-2 space-y-1">
+              {regionalCalculators("nigeria").map((calc) => (
+                <li key={calc.slug}>
+                  <Link
+                    href={calculatorPath(calc)}
+                    aria-current={
+                      pathname === calculatorPath(calc) ? "page" : undefined
+                    }
+                    className="block rounded-md px-2 py-2 text-sm text-slate-700 transition-colors duration-150 hover:bg-slate-100 aria-[current=page]:bg-blue-50 aria-[current=page]:text-blue-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:aria-[current=page]:bg-blue-950 dark:aria-[current=page]:text-blue-300"
+                  >
+                    {calc.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
           <Link
             href="/blog"
             className="mt-4 block rounded-md border-t border-slate-200 px-2 pt-4 pb-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"

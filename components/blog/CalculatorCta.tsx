@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getCalculator } from "@/lib/calculators/registry";
+import { getCalculator, calculatorPath } from "@/lib/calculators/registry";
 import type { CalculatorSlug } from "@/lib/types";
 
 /** Inline call-to-action that sends readers from an article to a calculator. */
@@ -15,7 +15,7 @@ export function CalculatorCta({
   const Icon = calc.icon;
   return (
     <Link
-      href={`/${calc.slug}`}
+      href={calculatorPath(calc)}
       className="group my-6 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 no-underline! transition-colors duration-150 hover:border-blue-300 dark:border-blue-900 dark:bg-blue-950 dark:hover:border-blue-800"
     >
       <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-white text-blue-600 dark:bg-slate-900 dark:text-blue-400">

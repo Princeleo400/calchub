@@ -370,6 +370,50 @@ export default function MethodologyPage() {
         .
       </p>
 
+      <h2>Nigeria PAYE calculator</h2>
+      <p>
+        Follows the Nigeria Tax Act 2025, in force from 1 January 2026.
+        Chargeable income is yearly gross pay less the deductions allowed by
+        section 30: pension contributions, National Housing Fund contributions,
+        health insurance contributions, life insurance premiums, mortgage
+        interest on an owner-occupied home, and rent relief of 20% of rent paid
+        up to ₦500,000.
+      </p>
+      <ul>
+        <li>
+          Bands from the Fourth Schedule: first ₦800,000 at 0%, next ₦2.2
+          million at 15%, next ₦9 million at 18%, next ₦13 million at 21%, next
+          ₦25 million at 23%, and above ₦50 million at 25%.
+        </li>
+        <li>
+          Employee pension is 8% of basic, housing and transport (Pension Reform
+          Act 2014, section 4). NHF is 2.5% of basic salary (National Housing
+          Fund Act, section 4).
+        </li>
+        <li>
+          Pay at or below the national minimum wage of ₦70,000 a month is
+          excluded from tax (section 58).
+        </li>
+        <li>
+          The comparison uses the old Personal Income Tax Act: pension, NHF and
+          health insurance first, then a consolidated relief allowance of the
+          higher of ₦200,000 or 1% of gross, plus 20% of gross, and bands of 7%
+          to 24%. The old minimum tax rule is not modelled, and the comparison
+          is hidden when life insurance or mortgage interest is claimed.
+        </li>
+      </ul>
+      <p>
+        Sources:{" "}
+        <a href="https://africacheck.org/sites/default/files/media/documents/2025-07/NIGERIA-TAX-ACT-2025.pdf">
+          Nigeria Tax Act 2025
+        </a>{" "}
+        and{" "}
+        <a href="https://taxsummaries.pwc.com/nigeria/individual">
+          PwC Worldwide Tax Summaries
+        </a>
+        .
+      </p>
+
       <h2>Found a problem?</h2>
       <p>
         If a result looks wrong, please <Link href="/contact">tell us</Link> the

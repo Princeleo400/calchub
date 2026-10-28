@@ -1,7 +1,9 @@
 import Link from "next/link";
 import {
+  calculatorPath,
   calculatorsByCategory,
   categoryLabels,
+  regionalCalculators,
 } from "@/lib/calculators/registry";
 import type { CalculatorCategory } from "@/lib/types";
 import { site } from "@/lib/site";
@@ -35,8 +37,14 @@ export function Footer() {
             <FooterColumn
               key={category}
               title={categoryLabels[category]}
-              links={calculatorsByCategory(category).map((calculator) => ({
-                href: `/${calculator.slug}`,
+              links={[
+                ...calculatorsByCategory(category),
+                // Country tools are listed under Finance in the footer.
+                ...(category === "finance"
+                  ? regionalCalculators("nigeria")
+                  : []),
+              ].map((calculator) => ({
+                href: calculatorPath(calculator),
                 label: calculator.name,
               }))}
             />

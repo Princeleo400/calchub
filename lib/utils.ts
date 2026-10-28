@@ -16,9 +16,14 @@ export function formatCurrency(
   const key = `${currency}-${decimals}`;
   let fmt = currencyFormatters.get(key);
   if (!fmt) {
-    // Format each currency the way its own readers expect: CAD as "$", not "CA$".
-    const locale =
-      currency === "CAD" ? "en-CA" : currency === "GBP" ? "en-GB" : "en-US";
+    // Format each currency the way its own readers expect: CAD as "$", not
+    // "CA$", and naira as "₦", not "NGN".
+    const locales: Record<string, string> = {
+      CAD: "en-CA",
+      GBP: "en-GB",
+      NGN: "en-NG",
+    };
+    const locale = locales[currency] ?? "en-US";
     fmt = new Intl.NumberFormat(locale, {
       style: "currency",
       currency,

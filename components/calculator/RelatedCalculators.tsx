@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { relatedCalculators } from "@/lib/calculators/registry";
+import { relatedCalculators, calculatorPath } from "@/lib/calculators/registry";
 import type { CalculatorSlug } from "@/lib/types";
 
 export function RelatedCalculators({ current }: { current: CalculatorSlug }) {
@@ -21,7 +21,7 @@ export function RelatedCalculators({ current }: { current: CalculatorSlug }) {
           return (
             <li key={calc.slug}>
               <Link
-                href={`/${calc.slug}`}
+                href={calculatorPath(calc)}
                 className="group flex h-full flex-col rounded-lg border border-slate-200 p-4 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-900"
               >
                 <span className="flex size-8 items-center justify-center rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
