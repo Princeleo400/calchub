@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           below, and you can opt out of personalized ads.
         </p>
       }
-      lastUpdated="2026-10-20"
+      lastUpdated="2026-10-28"
     >
       <h2>Who we are</h2>
       <p>
@@ -89,6 +89,15 @@ export default function PrivacyPage() {
       <p>
         If other advertising partners are added in future, they will be listed
         here with links to their own privacy and opt-out pages.
+      </p>
+
+      <h2>Ad blocker check</h2>
+      <p>
+        If you use an ad blocker, the site may notice that ads did not load and
+        show a one-time message asking you to allow them. The check runs
+        entirely in your browser and nothing about it is sent to us or anyone
+        else. If you close the message, a note in your browser&apos;s local
+        storage keeps it hidden for a week.
       </p>
 
       <h2>Cookie consent</h2>

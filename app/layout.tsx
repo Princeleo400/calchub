@@ -4,6 +4,7 @@ import {
   GoogleAnalyticsPageViews,
   GoogleTags,
 } from "@/components/analytics/GoogleTags";
+import { AdBlockNotice } from "@/components/ads/AdBlockNotice";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { adsenseClient } from "@/lib/googleConfig";
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <GoogleAnalyticsPageViews />
+        <AdBlockNotice />
       </body>
     </html>
   );

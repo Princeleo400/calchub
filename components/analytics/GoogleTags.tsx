@@ -3,6 +3,7 @@ import {
   CONSENT_REQUIRED_REGIONS,
   gaMeasurementId,
 } from "@/lib/googleConfig";
+import { ADSENSE_STATUS_KEY } from "@/lib/adBlock";
 import { PageViewTracker } from "./PageViewTracker";
 
 const consentDenied = {
@@ -39,7 +40,9 @@ function buildInitScript() {
       wait_for_update: 500,
     })});`,
     `gtag("consent","default",${JSON.stringify(consentGranted)});`,
-    'function loadScript(source,anonymous){var element=document.createElement("script");element.async=true;element.src=source;if(anonymous)element.crossOrigin="anonymous";document.head.appendChild(element);}',
+    // statusKey records "loaded" or "failed" on window, so the ad blocker
+    // notice can tell whether the AdSense script was blocked.
+    'function loadScript(source,anonymous,statusKey){var element=document.createElement("script");element.async=true;element.src=source;if(anonymous)element.crossOrigin="anonymous";if(statusKey){window[statusKey]="loading";element.onload=function(){window[statusKey]="loaded"};element.onerror=function(){window[statusKey]="failed"}}document.head.appendChild(element);}',
   ];
   if (gaMeasurementId) {
     const gtagSource = `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`;
@@ -51,7 +54,9 @@ function buildInitScript() {
   }
   if (adsenseClient) {
     const adsenseSource = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
-    lines.push(`loadScript(${JSON.stringify(adsenseSource)},true);`);
+    lines.push(
+      `loadScript(${JSON.stringify(adsenseSource)},true,${JSON.stringify(ADSENSE_STATUS_KEY)});`,
+    );
   }
   return lines.join("");
 }
